@@ -1,0 +1,24 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package org.paddy.stockmarket.util.json;
+
+import java.util.List;
+
+/**
+ *
+ * @author paddy
+ */
+public class Results
+{
+    protected List<Quote> quote;
+    public List<Quote> getQuote()
+    {
+            return quote;
+    }
+    public void setQuote(List<Quote> quote)
+    {
+            this.quote = quote;
+    } 
+}
