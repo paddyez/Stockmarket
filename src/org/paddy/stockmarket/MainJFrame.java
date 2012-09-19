@@ -4,19 +4,174 @@
  */
 package org.paddy.stockmarket;
 
+import com.google.gson.Gson;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLEncoder;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
+import org.paddy.stockmarket.util.json.Query;
+import org.paddy.stockmarket.util.json.QueryContainer;
+import org.paddy.stockmarket.util.json.Quote;
+import org.paddy.stockmarket.util.json.Results;
+
 /**
  *
  * @author root
  */
-public class MainJFrame extends javax.swing.JFrame {
+public class MainJFrame extends javax.swing.JFrame 
+{
 
     /**
      * Creates new form MAinJFrame
      */
-    public MainJFrame() {
+    public MainJFrame()
+    {
         initComponents();
+        HashSet<String> stocksymbols = getSymbols();
+        if(stocksymbols != null)
+        {
+            Iterator<String> iterator = stocksymbols.iterator();
+            String symbols;
+            symbols = "";
+            while (iterator.hasNext())
+            {
+                symbols += "\"" + iterator.next() + "\"";
+                if(iterator.hasNext())
+                {
+                    symbols += ",";
+                }
+            }
+            readPrices(symbols);
+        }
     }
-
+    private HashSet<String> getSymbols()
+    {
+        HashSet<String> stockSymbols = null;
+        boolean exists = (new File("Symbols")).exists();
+        if (exists) 
+        {
+            try
+            {
+                FileInputStream fis = new FileInputStream("Symbols");
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                stockSymbols = (HashSet<String>) ois.readObject();
+            }
+            catch(FileNotFoundException fnfe)
+            {
+                System.err.println(fnfe);
+            }
+            catch(IOException | ClassNotFoundException e)
+            {
+                System.err.println(e);
+            }
+            // File or directory exists
+        }
+        else
+        {
+            String[] symbols = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD","EURGBP","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
+            stockSymbols = new HashSet(Arrays.asList(symbols));
+            try
+            {
+                FileOutputStream fos = new FileOutputStream("Symbols");
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(stockSymbols);
+                oos.close();
+            }
+            catch(FileNotFoundException fnfe)
+            {
+                System.err.println(fnfe);
+            }
+            catch(IOException ioe)
+            {
+                System.err.println(ioe);
+            }
+            // File or directory does not exist
+        }
+        return stockSymbols;
+    }
+    private void readPrices(String symbols)
+    {
+        try
+        {
+                String requestURI = "http://query.yahooapis.com/v1/public/yql?q=";
+                String YQLquery = URLEncoder.encode("select Name,Ask,AskRealtime,BidRealtime,StockExchange,DividendYield,PercentChange "
+                                                                                                + "from yahoo.finance.quotes "
+                                                                                                + "where symbol in (" + symbols + ") | sort(field=\"Name\", descending=\"true\")", "UTF-8");
+                String GETparam = "&format=json"
+                                                        + "&diagnostics=true"
+                                                        + "&env=" + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
+                String request = requestURI + YQLquery + GETparam;
+                try
+                {
+                        URL url = new URL(request);
+                        try
+                        {
+                                InputStreamReader isr = new InputStreamReader(url.openStream());
+                                BufferedReader in = new BufferedReader(isr);
+                                String inputLine;
+                                String returnString = "";
+                                while ((inputLine = in.readLine()) != null)
+                                {
+                                        returnString += inputLine;
+                                }
+                                in.close();
+                                QueryContainer queryContainer = new Gson().fromJson(returnString, QueryContainer.class);
+                                Query query = queryContainer.getQuery();
+                                //System.out.println(query.getCount());
+                                Results results = query.getResults();
+                                List<Quote> quotes = results.getQuote();
+                                Iterator<Quote> iterator = quotes.iterator();
+                                while (iterator.hasNext())
+                                {
+                                        Quote quote = iterator.next();
+                                        String name = quote.getName();
+                                        String bidRealtime = quote.getBidRealtime();
+                                        if(bidRealtime != null)
+                                        {
+                                                try
+                                                {
+                                                        float bid = Float.parseFloat(bidRealtime);
+                                                        System.out.println(name + ": " + bid);
+                                                }
+                                                catch(NumberFormatException nfe)
+                                                {
+                                                        System.err.println(nfe);
+                                                }
+                                        }
+                                        else
+                                        {
+                                                System.out.println("BidRealtime is null for: " + name);
+                                        }
+                                }
+                        }
+                        catch(IOException ioe)
+                        {
+                                System.err.println(ioe);
+                        }
+                }
+                catch(MalformedURLException mue)
+                {
+                        System.err.println(mue);
+                }
+        }
+        catch(UnsupportedEncodingException uee)
+        {
+                System.err.println(uee);
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
