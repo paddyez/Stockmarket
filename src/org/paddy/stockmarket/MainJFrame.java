@@ -21,6 +21,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -33,7 +34,7 @@ import org.paddy.stockmarket.util.json.Results;
  *
  * @author root
  */
-public class MainJFrame extends javax.swing.JFrame 
+public class MainJFrame extends javax.swing.JFrame
 {
 
     /**
@@ -45,6 +46,9 @@ public class MainJFrame extends javax.swing.JFrame
         Image image =Toolkit.getDefaultToolkit().getImage(getClass().getResource("Stockmarket.png"));
         this.setIconImage(image);
         initComponents();
+        String[] symbolsArray = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD=X","EURGBP=X","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
+        HashSet stockSymbols = new HashSet(Arrays.asList(symbolsArray));
+        setSymbols(stockSymbols);
         HashSet<String> stocksymbols = getSymbols();
         if(stocksymbols != null)
         {
@@ -59,18 +63,18 @@ public class MainJFrame extends javax.swing.JFrame
                     symbols += ",";
                 }
             }
-            //readPrices(symbols);
+            readPrices(symbols);
         }
     }
     /**
-     * 
-     * @return 
+     *
+     * @return
      */
     private HashSet<String> getSymbols()
     {
         HashSet<String> stockSymbols = null;
         boolean exists = (new File("Symbols")).exists();
-        if (exists) 
+        if (exists)
         {
             try
             {
@@ -90,13 +94,13 @@ public class MainJFrame extends javax.swing.JFrame
         return stockSymbols;
     }
     /**
-     * 
-     * @param stockSymbols 
+     *
+     * @param stockSymbols
      */
     private void setSymbols(HashSet<String> stockSymbols)
     {
         HashSet<String> stockSymbolsFile = null;
-        boolean exists = (new File("Symbols")).exists();       
+        boolean exists = (new File("Symbols")).exists();
         if (exists)
         {
             try
@@ -114,14 +118,11 @@ public class MainJFrame extends javax.swing.JFrame
                 System.err.println(e);
             }
         }
-        if(stockSymbolsFile != null)
+        if(stockSymbolsFile != null && stockSymbols != null)
         {
             stockSymbols.addAll(stockSymbolsFile);
         }
-        /*
-        String[] symbols = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD","EURGBP","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
-        stockSymbols = new HashSet(Arrays.asList(symbols));
-        */
+
         if(stockSymbols.size()<100)
         {
             try
@@ -142,15 +143,15 @@ public class MainJFrame extends javax.swing.JFrame
         }
     }
     /**
-     * 
-     * @param symbols 
+     *
+     * @param symbols
      */
     private void readPrices(String symbols)
     {
         try
         {
                 String requestURI = "http://query.yahooapis.com/v1/public/yql?q=";
-                String YQLquery = URLEncoder.encode("select Name,Ask,AskRealtime,BidRealtime,StockExchange,DividendYield,PercentChange "
+                String YQLquery = URLEncoder.encode("select Name,Ask,AskRealtime,BidRealtime,StockExchange,DividendYield,PercentChange,Symbol,LastTradePriceOnly,Bid "
                                                                                                 + "from yahoo.finance.quotes "
                                                                                                 + "where symbol in (" + symbols + ") | sort(field=\"Name\", descending=\"true\")", "UTF-8");
                 String GETparam = "&format=json"
@@ -182,21 +183,48 @@ public class MainJFrame extends javax.swing.JFrame
                                         Quote quote = iterator.next();
                                         String name = quote.getName();
                                         String bidRealtime = quote.getBidRealtime();
+                                        String lastTradePriceOnly = quote.getLastTradePriceOnly();
+                                        String bidString = quote.getBid();
+                                        float bid;
                                         if(bidRealtime != null)
                                         {
-                                                try
-                                                {
-                                                        float bid = Float.parseFloat(bidRealtime);
-                                                        System.out.println(name + ": " + bid);
-                                                }
-                                                catch(NumberFormatException nfe)
-                                                {
-                                                        System.err.println(nfe);
-                                                }
+                                            try
+                                            {
+                                                bid = Float.parseFloat(bidRealtime);
+                                                System.out.println(name + ": " + bid);
+                                            }
+                                            catch(NumberFormatException nfe)
+                                            {
+                                                System.err.println(nfe);
+                                            }
+                                        }
+                                        else if(lastTradePriceOnly != null)
+                                        {
+                                            try
+                                            {
+                                                float lastPrice = Float.parseFloat(lastTradePriceOnly);
+                                                System.out.println(name + ": " + lastPrice);
+                                            }
+                                            catch(NumberFormatException nfe)
+                                            {
+                                                System.err.println(nfe);
+                                            }
+                                        }
+                                        else if(bidString != null)
+                                        {
+                                            try
+                                            {
+                                                bid = Float.parseFloat(bidString);
+                                                System.out.println(name + ": " + bid);
+                                            }
+                                            catch(NumberFormatException nfe)
+                                            {
+                                                System.err.println(nfe);
+                                            }
                                         }
                                         else
                                         {
-                                                System.out.println("BidRealtime is null for: " + name);
+                                                System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
                                         }
                                 }
                         }
