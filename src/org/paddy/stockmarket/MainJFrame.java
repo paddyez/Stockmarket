@@ -5,6 +5,9 @@
 package org.paddy.stockmarket;
 
 import com.google.gson.Gson;
+import java.awt.Image;
+import java.awt.Toolkit;
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -18,7 +21,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -39,6 +41,9 @@ public class MainJFrame extends javax.swing.JFrame
      */
     public MainJFrame()
     {
+        super("Stockmarkets");
+        Image image =Toolkit.getDefaultToolkit().getImage(getClass().getResource("Stockmarket.png"));
+        this.setIconImage(image);
         initComponents();
         HashSet<String> stocksymbols = getSymbols();
         if(stocksymbols != null)
@@ -54,9 +59,13 @@ public class MainJFrame extends javax.swing.JFrame
                     symbols += ",";
                 }
             }
-            readPrices(symbols);
+            //readPrices(symbols);
         }
     }
+    /**
+     * 
+     * @return 
+     */
     private HashSet<String> getSymbols()
     {
         HashSet<String> stockSymbols = null;
@@ -77,12 +86,44 @@ public class MainJFrame extends javax.swing.JFrame
             {
                 System.err.println(e);
             }
-            // File or directory exists
         }
-        else
+        return stockSymbols;
+    }
+    /**
+     * 
+     * @param stockSymbols 
+     */
+    private void setSymbols(HashSet<String> stockSymbols)
+    {
+        HashSet<String> stockSymbolsFile = null;
+        boolean exists = (new File("Symbols")).exists();       
+        if (exists)
         {
-            String[] symbols = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD","EURGBP","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
-            stockSymbols = new HashSet(Arrays.asList(symbols));
+            try
+            {
+                FileInputStream fis = new FileInputStream("Symbols");
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                stockSymbolsFile = (HashSet<String>) ois.readObject();
+            }
+            catch(FileNotFoundException fnfe)
+            {
+                System.err.println(fnfe);
+            }
+            catch(IOException | ClassNotFoundException e)
+            {
+                System.err.println(e);
+            }
+        }
+        if(stockSymbolsFile != null)
+        {
+            stockSymbols.addAll(stockSymbolsFile);
+        }
+        /*
+        String[] symbols = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD","EURGBP","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
+        stockSymbols = new HashSet(Arrays.asList(symbols));
+        */
+        if(stockSymbols.size()<100)
+        {
             try
             {
                 FileOutputStream fos = new FileOutputStream("Symbols");
@@ -98,10 +139,12 @@ public class MainJFrame extends javax.swing.JFrame
             {
                 System.err.println(ioe);
             }
-            // File or directory does not exist
         }
-        return stockSymbols;
     }
+    /**
+     * 
+     * @param symbols 
+     */
     private void readPrices(String symbols)
     {
         try
@@ -184,49 +227,53 @@ public class MainJFrame extends javax.swing.JFrame
         jMenuItem1 = new javax.swing.JMenuItem();
         jDesktopPane1 = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
-        jMenu1 = new javax.swing.JMenu();
-        jMenuItem2 = new javax.swing.JMenuItem();
-        jMenuItem3 = new javax.swing.JMenuItem();
-        jMenu2 = new javax.swing.JMenu();
-        jMenu3 = new javax.swing.JMenu();
-        jMenuItem4 = new javax.swing.JMenuItem();
+        jMenuFile = new javax.swing.JMenu();
+        jMenuItemNew = new javax.swing.JMenuItem();
+        jMenuItemOpen = new javax.swing.JMenuItem();
+        jMenuEdit = new javax.swing.JMenu();
+        jMenuHelp = new javax.swing.JMenu();
+        JMenuItemAbout = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
-        jMenu1.setText("File");
+        jMenuFile.setMnemonic(KeyEvent.VK_F);
+        jMenuFile.setText("File");
 
-        jMenuItem2.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.SHIFT_MASK));
-        jMenuItem2.setText("New");
-        jMenuItem2.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemNew.setMnemonic(KeyEvent.VK_N);
+        jMenuItemNew.setText("New");
+        jMenuItemNew.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem2ActionPerformed(evt);
+                jMenuItemNewActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem2);
+        jMenuFile.add(jMenuItemNew);
 
-        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.SHIFT_MASK));
-        jMenuItem3.setText("Open");
-        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+        jMenuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemOpen.setMnemonic(KeyEvent.VK_O);
+        jMenuItemOpen.setText("Open");
+        jMenuItemOpen.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                jMenuItem3ActionPerformed(evt);
+                jMenuItemOpenActionPerformed(evt);
             }
         });
-        jMenu1.add(jMenuItem3);
+        jMenuFile.add(jMenuItemOpen);
 
-        jMenuBar1.add(jMenu1);
+        jMenuBar1.add(jMenuFile);
 
-        jMenu2.setText("Edit");
-        jMenuBar1.add(jMenu2);
+        jMenuEdit.setText("Edit");
+        jMenuBar1.add(jMenuEdit);
 
-        jMenu3.setText("Help");
+        jMenuHelp.setMnemonic(KeyEvent.VK_H);
+        jMenuHelp.setText("Help");
 
-        jMenuItem4.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_A, 0));
-        jMenuItem4.setText("About");
-        jMenu3.add(jMenuItem4);
+        JMenuItemAbout.setMnemonic(KeyEvent.VK_A);
+        JMenuItemAbout.setText("About");
+        jMenuHelp.add(JMenuItemAbout);
 
-        jMenuBar1.add(jMenu3);
+        jMenuBar1.add(jMenuHelp);
 
         setJMenuBar(jMenuBar1);
 
@@ -244,23 +291,23 @@ public class MainJFrame extends javax.swing.JFrame
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void jMenuItem2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem2ActionPerformed
+    private void jMenuItemNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNewActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem2ActionPerformed
+    }//GEN-LAST:event_jMenuItemNewActionPerformed
 
-    private void jMenuItem3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItem3ActionPerformed
+    private void jMenuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOpenActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_jMenuItem3ActionPerformed
+    }//GEN-LAST:event_jMenuItemOpenActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem JMenuItemAbout;
     private javax.swing.JDesktopPane jDesktopPane1;
-    private javax.swing.JMenu jMenu1;
-    private javax.swing.JMenu jMenu2;
-    private javax.swing.JMenu jMenu3;
     private javax.swing.JMenuBar jMenuBar1;
+    private javax.swing.JMenu jMenuEdit;
+    private javax.swing.JMenu jMenuFile;
+    private javax.swing.JMenu jMenuHelp;
     private javax.swing.JMenuItem jMenuItem1;
-    private javax.swing.JMenuItem jMenuItem2;
-    private javax.swing.JMenuItem jMenuItem3;
-    private javax.swing.JMenuItem jMenuItem4;
+    private javax.swing.JMenuItem jMenuItemNew;
+    private javax.swing.JMenuItem jMenuItemOpen;
     // End of variables declaration//GEN-END:variables
 }

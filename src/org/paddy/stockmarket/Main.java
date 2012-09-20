@@ -4,6 +4,8 @@
  */
 package org.paddy.stockmarket;
 
+import java.awt.Toolkit;
+
 /**
  *
  * @author root
@@ -34,7 +36,9 @@ public class Main {
         java.awt.EventQueue.invokeLater(new Runnable() {
             @Override
             public void run() {
-                new MainJFrame().setVisible(true);
+                MainJFrame mainJFrame;
+                mainJFrame = new MainJFrame();
+                mainJFrame.setVisible(true);
             }
         });
     }
