@@ -19,9 +19,10 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
-import java.net.URISyntaxException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -52,8 +53,16 @@ public class MainJFrame extends javax.swing.JFrame
             boolean exists = (new File(url.toURI())).exists();
             if(exists)
             {
-                List<Image> imageList = WindowIcons.createScaledIcons(url);
-                this.setIconImages(imageList);
+                ArrayList<Image> imageList = WindowIcons.createScaledIcons(url);
+                if(imageList.size() == WindowIcons.getResolutionSize())
+                {
+                    this.setIconImages(imageList);
+                }
+                else
+                {
+                    Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("Stockmarket.png"));
+                    this.setIconImage(image);
+                }
             }
             else
             {
@@ -64,11 +73,7 @@ public class MainJFrame extends javax.swing.JFrame
         {
             System.err.println(urise);
         }
-           
-        //Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("Stockmarket.png"));
-        //setIconImage(image);
         initComponents();
-        
         stocksymbols = getSymbols();
     }
     /**
@@ -85,8 +90,12 @@ public class MainJFrame extends javax.swing.JFrame
             try
             {
                 FileInputStream fis = new FileInputStream("Symbols");
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                stockSymbols = (HashSet<String>) ois.readObject();
+                int empty = fis.available();
+                if(empty != 0)
+                {
+                    ObjectInputStream ois = new ObjectInputStream(fis);
+                    stockSymbols = (HashSet<String>) ois.readObject();
+                }
             }
             catch(FileNotFoundException fnfe)
             {
@@ -113,8 +122,12 @@ public class MainJFrame extends javax.swing.JFrame
             try
             {
                 FileInputStream fis = new FileInputStream("Symbols");
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                stockSymbolsFile = (HashSet<String>) ois.readObject();
+                int empty = fis.available();
+                if(empty != 0)
+                {
+                    ObjectInputStream ois = new ObjectInputStream(fis);
+                    stockSymbolsFile = (HashSet<String>) ois.readObject();
+                }
             }
             catch(FileNotFoundException fnfe)
             {
@@ -372,8 +385,8 @@ public class MainJFrame extends javax.swing.JFrame
 
     private void jMenuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSaveActionPerformed
         String[] symbolsArray = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD=X","EURGBP=X","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
-        HashSet<String> stockSymbols = new HashSet<String>(Arrays.asList(symbolsArray));
-        setSymbols(stockSymbols);
+        stocksymbols = new HashSet<>(Arrays.asList(symbolsArray));
+        setSymbols(stocksymbols);
     }//GEN-LAST:event_jMenuItemSaveActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

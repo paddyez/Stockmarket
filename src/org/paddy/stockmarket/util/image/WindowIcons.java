@@ -16,22 +16,29 @@ import javax.imageio.ImageIO;
  *
  * @author paddy
  */
-public class WindowIcons 
+public class WindowIcons
 {
     private static final int[] RESOLUTIONS = { 16, 24, 32, 48, 64, 96, 128 };
+    private URL url;
+
+    public WindowIcons(URL url)
+    {
+        this.url =url;
+        List<Image> imageList = getWindowIcons(url);
+    }
     /**
-     * 
+     *
      * @param imageResourceLocation
      * @return
-     * @throws FileNotFoundException 
-     */ 
-    public static List<Image> createScaledIcons(URL url) 
+     * @throws FileNotFoundException
+     */
+    public static ArrayList<Image> createScaledIcons(URL url)
     {
-        List<Image> list = new ArrayList<>();
+        ArrayList<Image> list = new ArrayList<>();
         try
         {
             Image icon = ImageIO.read(url);
-            for (int res : RESOLUTIONS) 
+            for (int res : RESOLUTIONS)
             {
                     list.add(createScaledImage(icon, res, res));
             }
@@ -43,13 +50,13 @@ public class WindowIcons
         return list;
     }
     /**
-     * 
+     *
      * @param image
      * @param width
      * @param height
-     * @return 
+     * @return
      */
-    private static BufferedImage createScaledImage(Image image, int width, int height) 
+    private static BufferedImage createScaledImage(Image image, int width, int height)
     {
         BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
         Graphics2D g2d = (Graphics2D) scaledImage.createGraphics();
@@ -63,12 +70,21 @@ public class WindowIcons
     }
     /**
      * In GUI-Klasse kopieren und "imageIcons" des Frames mit Custom Code initialisieren:
-     * @return 
+     * @return
      */
-    private List<Image> getWindowIcons() 
+    private List<Image> getWindowIcons(URL url)
     {
-        URL url = getClass().getResource("Stockmarket.png");
+        System.out.println(url);
         List<Image> list = WindowIcons.createScaledIcons(url);
-        return list;   
+        return list;
+    }
+    /**
+     *
+     * @return
+     */
+    public static int getResolutionSize()
+    {
+        int size = RESOLUTIONS.length;
+        return size;
     }
 }
