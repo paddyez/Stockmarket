@@ -25,6 +25,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.JOptionPane;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.QueryContainer;
 import org.paddy.stockmarket.util.json.Quote;
@@ -46,30 +47,14 @@ public class MainJFrame extends javax.swing.JFrame
         Image image =Toolkit.getDefaultToolkit().getImage(getClass().getResource("Stockmarket.png"));
         this.setIconImage(image);
         initComponents();
-        String[] symbolsArray = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD=X","EURGBP=X","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
-        HashSet stockSymbols = new HashSet(Arrays.asList(symbolsArray));
-        setSymbols(stockSymbols);
-        HashSet<String> stocksymbols = getSymbols();
-        if(stocksymbols != null)
-        {
-            Iterator<String> iterator = stocksymbols.iterator();
-            String symbols;
-            symbols = "";
-            while (iterator.hasNext())
-            {
-                symbols += "\"" + iterator.next() + "\"";
-                if(iterator.hasNext())
-                {
-                    symbols += ",";
-                }
-            }
-            readPrices(symbols);
-        }
+        
+        stocksymbols = getSymbols();
     }
     /**
      *
      * @return
      */
+    @SuppressWarnings("unchecked")
     private HashSet<String> getSymbols()
     {
         HashSet<String> stockSymbols = null;
@@ -97,6 +82,7 @@ public class MainJFrame extends javax.swing.JFrame
      *
      * @param stockSymbols
      */
+    @SuppressWarnings("unchecked")
     private void setSymbols(HashSet<String> stockSymbols)
     {
         HashSet<String> stockSymbolsFile = null;
@@ -253,16 +239,20 @@ public class MainJFrame extends javax.swing.JFrame
     private void initComponents() {
 
         jMenuItem1 = new javax.swing.JMenuItem();
+        jMenuItem2 = new javax.swing.JMenuItem();
         jDesktopPane1 = new javax.swing.JDesktopPane();
         jMenuBar1 = new javax.swing.JMenuBar();
         jMenuFile = new javax.swing.JMenu();
         jMenuItemNew = new javax.swing.JMenuItem();
         jMenuItemOpen = new javax.swing.JMenuItem();
+        jMenuItemSave = new javax.swing.JMenuItem();
         jMenuEdit = new javax.swing.JMenu();
         jMenuHelp = new javax.swing.JMenu();
         JMenuItemAbout = new javax.swing.JMenuItem();
 
         jMenuItem1.setText("jMenuItem1");
+
+        jMenuItem2.setText("jMenuItem2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
 
@@ -288,6 +278,15 @@ public class MainJFrame extends javax.swing.JFrame
             }
         });
         jMenuFile.add(jMenuItemOpen);
+
+        jMenuItemSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
+        jMenuItemSave.setText("Save");
+        jMenuItemSave.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemSaveActionPerformed(evt);
+            }
+        });
+        jMenuFile.add(jMenuItemSave);
 
         jMenuBar1.add(jMenuFile);
 
@@ -320,12 +319,41 @@ public class MainJFrame extends javax.swing.JFrame
     }// </editor-fold>//GEN-END:initComponents
 
     private void jMenuItemNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNewActionPerformed
-        // TODO add your handling code here:
+        if(stocksymbols != null)
+        {
+            Iterator<String> iterator = stocksymbols.iterator();
+            String symbols;
+            symbols = "";
+            while (iterator.hasNext())
+            {
+                symbols += "\"" + iterator.next() + "\"";
+                if(iterator.hasNext())
+                {
+                    symbols += ",";
+                }
+            }
+            readPrices(symbols);
+        }
+        else
+        {
+            System.err.println("No stock symbols loaded.");
+            JOptionPane.showMessageDialog(this,
+                "No stock symbols loaded.\nTry saving at least on symbol.",
+                "Warning",
+                JOptionPane.WARNING_MESSAGE);
+
+        }
     }//GEN-LAST:event_jMenuItemNewActionPerformed
 
     private void jMenuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOpenActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItemOpenActionPerformed
+
+    private void jMenuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSaveActionPerformed
+        String[] symbolsArray = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD=X","EURGBP=X","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
+        HashSet<String> stockSymbols = new HashSet<String>(Arrays.asList(symbolsArray));
+        setSymbols(stockSymbols);
+    }//GEN-LAST:event_jMenuItemSaveActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem JMenuItemAbout;
@@ -335,7 +363,11 @@ public class MainJFrame extends javax.swing.JFrame
     private javax.swing.JMenu jMenuFile;
     private javax.swing.JMenu jMenuHelp;
     private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JMenuItem jMenuItem2;
     private javax.swing.JMenuItem jMenuItemNew;
     private javax.swing.JMenuItem jMenuItemOpen;
+    private javax.swing.JMenuItem jMenuItemSave;
     // End of variables declaration//GEN-END:variables
+    public static final long serialVersionUID = 12345667890L;
+    private HashSet<String> stocksymbols;
 }
