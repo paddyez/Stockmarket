@@ -21,11 +21,13 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
+import java.net.URISyntaxException;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import javax.swing.JOptionPane;
+import org.paddy.stockmarket.util.image.WindowIcons;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.QueryContainer;
 import org.paddy.stockmarket.util.json.Quote;
@@ -44,8 +46,27 @@ public class MainJFrame extends javax.swing.JFrame
     public MainJFrame()
     {
         super("Stockmarkets");
-        Image image =Toolkit.getDefaultToolkit().getImage(getClass().getResource("Stockmarket.png"));
-        this.setIconImage(image);
+        URL url = getClass().getResource("Stockmarket.png");
+        try
+        {
+            boolean exists = (new File(url.toURI())).exists();
+            if(exists)
+            {
+                List<Image> imageList = WindowIcons.createScaledIcons(url);
+                this.setIconImages(imageList);
+            }
+            else
+            {
+                System.err.println("Iconfile: " + url + " does not exist!");
+            }
+        }
+        catch(URISyntaxException urise)
+        {
+            System.err.println(urise);
+        }
+           
+        //Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("Stockmarket.png"));
+        //setIconImage(image);
         initComponents();
         
         stocksymbols = getSymbols();
