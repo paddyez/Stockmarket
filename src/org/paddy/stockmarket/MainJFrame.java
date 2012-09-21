@@ -90,8 +90,12 @@ public class MainJFrame extends javax.swing.JFrame
             try
             {
                 FileInputStream fis = new FileInputStream("Symbols");
-                int empty = fis.available();
-                if(empty != 0)
+                int empty = fis.read();
+                if(empty == -1)
+                {
+                    System.err.println("File Symbols is empty!");
+                }
+                else
                 {
                     ObjectInputStream ois = new ObjectInputStream(fis);
                     stockSymbols = (HashSet<String>) ois.readObject();
@@ -122,8 +126,12 @@ public class MainJFrame extends javax.swing.JFrame
             try
             {
                 FileInputStream fis = new FileInputStream("Symbols");
-                int empty = fis.available();
-                if(empty != 0)
+                int empty = fis.read();
+                if(empty == -1)
+                {
+                    System.err.println("File Symbols is empty!");
+                }
+                else
                 {
                     ObjectInputStream ois = new ObjectInputStream(fis);
                     stockSymbolsFile = (HashSet<String>) ois.readObject();

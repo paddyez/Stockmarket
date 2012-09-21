@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 package org.paddy.stockmarket.util.image;
+import java.awt.AlphaComposite;
 import java.awt.Graphics2D;
 import java.awt.Image;
 import java.awt.RenderingHints;
@@ -20,7 +21,10 @@ public class WindowIcons
 {
     private static final int[] RESOLUTIONS = { 16, 24, 32, 48, 64, 96, 128 };
     private URL url;
-
+    /**
+     * 
+     * @param url 
+     */
     public WindowIcons(URL url)
     {
         this.url =url;
@@ -59,11 +63,11 @@ public class WindowIcons
     private static BufferedImage createScaledImage(Image image, int width, int height)
     {
         BufferedImage scaledImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);
-        Graphics2D g2d = (Graphics2D) scaledImage.createGraphics();
-        //g2d.setComposite(AlphaComposite.Src);
+        Graphics2D g2d = scaledImage.createGraphics();
+        g2d.setComposite(AlphaComposite.Src);
         g2d.setRenderingHint(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);
-        //g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
-        //g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+        g2d.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BICUBIC);
+        g2d.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
         g2d.drawImage(image, 0, 0, width, height, null);
         g2d.dispose();
         return scaledImage;
