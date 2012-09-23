@@ -20,14 +20,19 @@ import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.InetAddress;
 import java.net.MalformedURLException;
+import java.net.NetworkInterface;
+import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.paddy.stockmarket.util.image.WindowIcons;
 import org.paddy.stockmarket.util.json.Query;
@@ -75,6 +80,24 @@ public class MainJFrame extends javax.swing.JFrame
             System.err.println(urise);
         }
         initComponents();
+        Enumeration<NetworkInterface> interfaces;
+        try {
+            interfaces = NetworkInterface.getNetworkInterfaces();
+            while (interfaces.hasMoreElements())
+            {
+              NetworkInterface interf = interfaces.nextElement();
+              if (interf.isUp() && !interf.isLoopback())
+              {
+                System.out.println(interf.getName() + " up");
+              }
+              else
+              {
+                System.out.println(interf.getName() + " down"); 
+              }
+            }
+        } catch (SocketException ex) {
+            Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
+        }
         stocksymbols = getSymbols();
     }
     /**
