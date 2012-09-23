@@ -18,6 +18,7 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
+import java.net.InetAddress;
 import java.net.MalformedURLException;
 import java.net.URISyntaxException;
 import java.net.URL;
@@ -363,18 +364,31 @@ public class MainJFrame extends javax.swing.JFrame
     private void jMenuItemNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNewActionPerformed
         if(stocksymbols != null)
         {
-            Iterator<String> iterator = stocksymbols.iterator();
-            String symbols;
-            symbols = "";
-            while (iterator.hasNext())
+            boolean reachable = false;
+            try
             {
-                symbols += "\"" + iterator.next() + "\"";
-                if(iterator.hasNext())
+                reachable = InetAddress.getByName("query.yahooapis.com").isReachable(10000);
+                Iterator<String> iterator = stocksymbols.iterator();
+                String symbols;
+                symbols = "";
+                while (iterator.hasNext())
                 {
-                    symbols += ",";
+                    symbols += "\"" + iterator.next() + "\"";
+                    if(iterator.hasNext())
+                    {
+                        symbols += ",";
+                    }
                 }
+                readPrices(symbols);
             }
-            readPrices(symbols);
+            catch(IOException ioe)
+            {
+                System.err.println(ioe);
+                JOptionPane.showMessageDialog(this,
+                    "Are you connected to the internet?\nMaybe your DNS-server is down?",
+                    "Warning",
+                    JOptionPane.WARNING_MESSAGE);
+            }
         }
         else
         {
@@ -383,7 +397,6 @@ public class MainJFrame extends javax.swing.JFrame
                 "No stock symbols loaded.\nTry saving at least on symbol.",
                 "Warning",
                 JOptionPane.WARNING_MESSAGE);
-
         }
     }//GEN-LAST:event_jMenuItemNewActionPerformed
 
