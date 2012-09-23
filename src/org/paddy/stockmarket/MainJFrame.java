@@ -85,17 +85,19 @@ public class MainJFrame extends javax.swing.JFrame
             interfaces = NetworkInterface.getNetworkInterfaces();
             while (interfaces.hasMoreElements())
             {
-              NetworkInterface interf = interfaces.nextElement();
-              if (interf.isUp() && !interf.isLoopback())
-              {
-                System.out.println(interf.getName() + " up");
-              }
-              else
-              {
-                System.out.println(interf.getName() + " down"); 
-              }
+                NetworkInterface interf = interfaces.nextElement();
+                if (interf.isUp() && !interf.isLoopback())
+                {
+                  System.out.println(interf.getName() + " up");
+                }
+                else
+                {
+                  System.out.println(interf.getName() + " down"); 
+                }
             }
-        } catch (SocketException ex) {
+        }
+        catch (SocketException ex)
+        {
             Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
         }
         stocksymbols = getSymbols();
