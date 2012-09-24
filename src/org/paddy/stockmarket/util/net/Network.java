@@ -56,7 +56,7 @@ public class Network
     {
         boolean reachable;
         reachable = false;
-        int timeout = 1;
+        int timeout = 100;
         try
         {
             InetAddress[] inetAddresses = InetAddress.getAllByName(host);
@@ -75,18 +75,19 @@ public class Network
              * This will return 0 if the host is reachable.
              * Otherwise, you will get "2" as a return value.
              */
-            Process process = java.lang.Runtime.getRuntime().exec("ping -c 1 www.google.com");
+            Process process;
+            process = java.lang.Runtime.getRuntime().exec("ping -c 1 " + host);
             try
             {
                 int returnVal = process.waitFor();
-                if(returnVal ==0 )
+                if(returnVal == 0)
                 {
                     reachable = true;
                     return reachable;
                 }
                 else
                 {
-                    System.err.println(host + "Is not pingable!");
+                    System.err.println(host + " Is not pingable!");
                 }
             }
             catch(InterruptedException ie)
