@@ -8,7 +8,7 @@ import java.util.List;
 
 /**
  *
- * @author paddy
+ * @author paddy (Patrick-Emil Zörner)
  */
 public class Results
 {

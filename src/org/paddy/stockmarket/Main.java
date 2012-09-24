@@ -6,7 +6,7 @@ package org.paddy.stockmarket;
 
 /**
  *
- * @author root
+ * @author paddy (Patrick-Emil Zörner)
  */
 public class Main {
 

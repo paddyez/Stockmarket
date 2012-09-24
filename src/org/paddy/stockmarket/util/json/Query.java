@@ -6,7 +6,7 @@ package org.paddy.stockmarket.util.json;
 
 /**
  *
- * @author paddy
+ * @author paddy (Patrick-Emil Zörner)
  */
 public class Query
 {

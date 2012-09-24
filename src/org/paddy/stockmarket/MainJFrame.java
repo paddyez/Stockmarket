@@ -36,7 +36,7 @@ import org.paddy.stockmarket.util.json.Results;
 
 /**
  *
- * @author root
+ * @author paddy (Patrick-Emil Zörner)
  */
 public class MainJFrame extends javax.swing.JFrame
 {

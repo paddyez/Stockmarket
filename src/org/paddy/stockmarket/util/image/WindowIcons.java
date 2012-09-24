@@ -15,15 +15,16 @@ import java.util.List;
 import javax.imageio.ImageIO;
 /**
  *
- * @author paddy
+ * @author niabot
+ * @author paddy (Patrick-Emil Zörner)
  */
 public class WindowIcons
 {
-    private static final int[] RESOLUTIONS = { 16, 24, 32, 48, 64, 96, 128 };
+    private static final int[] RESOLUTIONS = { 16, 24, 32, 48, 64, 96, 128, 256 };
     private URL url;
     /**
-     * 
-     * @param url 
+     *
+     * @param url
      */
     public WindowIcons(URL url)
     {
