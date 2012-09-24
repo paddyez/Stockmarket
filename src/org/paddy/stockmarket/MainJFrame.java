@@ -92,7 +92,7 @@ public class MainJFrame extends javax.swing.JFrame
                 }
                 else
                 {
-                  System.out.println(interf.getName() + " down"); 
+                  System.out.println(interf.getName() + " down");
                 }
             }
         }
