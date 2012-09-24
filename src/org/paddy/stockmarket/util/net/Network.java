@@ -3,7 +3,6 @@
  * and open the template in the editor.
  */
 package org.paddy.stockmarket.util.net;
-
 import java.io.IOException;
 import java.net.InetAddress;
 import java.net.NetworkInterface;
@@ -11,7 +10,6 @@ import java.net.SocketException;
 import java.util.Enumeration;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-
 /**
  *
  * @author paddy
@@ -39,7 +37,7 @@ public class Network
                 }
                 else
                 {
-                  System.out.println(interf.getName() + " down");
+                    System.out.println(interf.getName() + " down");
                 }
             }
         }

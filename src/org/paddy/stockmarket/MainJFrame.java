@@ -187,95 +187,96 @@ public class MainJFrame extends javax.swing.JFrame
     {
         try
         {
-                String requestURI = "http://query.yahooapis.com/v1/public/yql?q=";
-                String YQLquery = URLEncoder.encode("select Name,Ask,AskRealtime,BidRealtime,StockExchange,DividendYield,PercentChange,Symbol,LastTradePriceOnly,Bid "
-                                                                                                + "from yahoo.finance.quotes "
-                                                                                                + "where symbol in (" + symbols + ") | sort(field=\"Name\", descending=\"true\")", "UTF-8");
-                String GETparam = "&format=json"
-                                                        + "&diagnostics=true"
-                                                        + "&env=" + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
-                String request = requestURI + YQLquery + GETparam;
+            String requestURI = "http://query.yahooapis.com/v1/public/yql?q=";
+            String YQLquery = URLEncoder.encode("select Name,Ask,AskRealtime,BidRealtime,StockExchange,DividendYield,PercentChange,Symbol,LastTradePriceOnly,Bid "
+                                                                                            + "from yahoo.finance.quotes "
+                                                                                            + "where symbol in (" + symbols + ") | sort(field=\"Name\", descending=\"true\")", "UTF-8");
+            String GETparam = "&format=json"
+                                                    + "&diagnostics=true"
+                                                    + "&env=" + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
+            String request = requestURI + YQLquery + GETparam;
+            try
+            {
+                URL url = new URL(request);
                 try
                 {
-                        URL url = new URL(request);
-                        try
+                    InputStreamReader isr;
+                    BufferedReader br;
+                    isr = new InputStreamReader(url.openStream());
+                    br = new BufferedReader(isr);
+                    String inputLine;
+                    String returnString;
+                    returnString = "";
+                    while ((inputLine = br.readLine()) != null)
+                    {
+                            returnString += inputLine;
+                    }
+                    br.close();
+                    QueryContainer queryContainer = new Gson().fromJson(returnString, QueryContainer.class);
+                    Query query = queryContainer.getQuery();
+                    //System.out.println(query.getCount());
+                    Results results = query.getResults();
+                    List<Quote> quotes = results.getQuote();
+                    Iterator<Quote> iterator = quotes.iterator();
+                    while (iterator.hasNext())
+                    {
+                        Quote quote = iterator.next();
+                        String name = quote.getName();
+                        String bidRealtime = quote.getBidRealtime();
+                        String lastTradePriceOnly = quote.getLastTradePriceOnly();
+                        String bidString = quote.getBid();
+                        float bid;
+                        if(bidRealtime != null)
                         {
-                                InputStreamReader isr;
-                                BufferedReader br;
-                                isr = new InputStreamReader(url.openStream());
-                                br = new BufferedReader(isr);
-                                String inputLine;
-                                String returnString = "";
-                                while ((inputLine = br.readLine()) != null)
-                                {
-                                        returnString += inputLine;
-                                }
-                                br.close();
-                                QueryContainer queryContainer = new Gson().fromJson(returnString, QueryContainer.class);
-                                Query query = queryContainer.getQuery();
-                                //System.out.println(query.getCount());
-                                Results results = query.getResults();
-                                List<Quote> quotes = results.getQuote();
-                                Iterator<Quote> iterator = quotes.iterator();
-                                while (iterator.hasNext())
-                                {
-                                        Quote quote = iterator.next();
-                                        String name = quote.getName();
-                                        String bidRealtime = quote.getBidRealtime();
-                                        String lastTradePriceOnly = quote.getLastTradePriceOnly();
-                                        String bidString = quote.getBid();
-                                        float bid;
-                                        if(bidRealtime != null)
-                                        {
-                                            try
-                                            {
-                                                bid = Float.parseFloat(bidRealtime);
-                                                System.out.println(name + ": " + bid);
-                                            }
-                                            catch(NumberFormatException nfe)
-                                            {
-                                                System.err.println(nfe);
-                                            }
-                                        }
-                                        else if(lastTradePriceOnly != null)
-                                        {
-                                            try
-                                            {
-                                                float lastPrice = Float.parseFloat(lastTradePriceOnly);
-                                                System.out.println(name + ": " + lastPrice);
-                                            }
-                                            catch(NumberFormatException nfe)
-                                            {
-                                                System.err.println(nfe);
-                                            }
-                                        }
-                                        else if(bidString != null)
-                                        {
-                                            try
-                                            {
-                                                bid = Float.parseFloat(bidString);
-                                                System.out.println(name + ": " + bid);
-                                            }
-                                            catch(NumberFormatException nfe)
-                                            {
-                                                System.err.println(nfe);
-                                            }
-                                        }
-                                        else
-                                        {
-                                                System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
-                                        }
-                                }
+                            try
+                            {
+                                bid = Float.parseFloat(bidRealtime);
+                                System.out.println(name + ": " + bid);
+                            }
+                            catch(NumberFormatException nfe)
+                            {
+                                System.err.println(nfe);
+                            }
                         }
-                        catch(IOException ioe)
+                        else if(lastTradePriceOnly != null)
                         {
-                                System.err.println(ioe);
+                            try
+                            {
+                                float lastPrice = Float.parseFloat(lastTradePriceOnly);
+                                System.out.println(name + ": " + lastPrice);
+                            }
+                            catch(NumberFormatException nfe)
+                            {
+                                System.err.println(nfe);
+                            }
                         }
+                        else if(bidString != null)
+                        {
+                            try
+                            {
+                                bid = Float.parseFloat(bidString);
+                                System.out.println(name + ": " + bid);
+                            }
+                            catch(NumberFormatException nfe)
+                            {
+                                System.err.println(nfe);
+                            }
+                        }
+                        else
+                        {
+                                System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
+                        }
+                    }
                 }
-                catch(MalformedURLException mue)
+                catch(IOException ioe)
                 {
-                        System.err.println(mue);
+                        System.err.println(ioe);
                 }
+            }
+            catch(MalformedURLException mue)
+            {
+                    System.err.println(mue);
+            }
         }
         catch(UnsupportedEncodingException uee)
         {
