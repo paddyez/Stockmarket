@@ -177,8 +177,10 @@ public class MainJFrame extends javax.swing.JFrame
         {
             try
             {
-                FileOutputStream fos = new FileOutputStream("Symbols");
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                FileOutputStream fos;
+                ObjectOutputStream oos;
+                fos = new FileOutputStream("Symbols");
+                oos = new ObjectOutputStream(fos);
                 oos.writeObject(stockSymbols);
                 oos.close();
             }
@@ -213,15 +215,17 @@ public class MainJFrame extends javax.swing.JFrame
                         URL url = new URL(request);
                         try
                         {
-                                InputStreamReader isr = new InputStreamReader(url.openStream());
-                                BufferedReader in = new BufferedReader(isr);
+                                InputStreamReader isr;
+                                BufferedReader br;
+                                isr = new InputStreamReader(url.openStream());
+                                br = new BufferedReader(isr);
                                 String inputLine;
                                 String returnString = "";
-                                while ((inputLine = in.readLine()) != null)
+                                while ((inputLine = br.readLine()) != null)
                                 {
                                         returnString += inputLine;
                                 }
-                                in.close();
+                                br.close();
                                 QueryContainer queryContainer = new Gson().fromJson(returnString, QueryContainer.class);
                                 Query query = queryContainer.getQuery();
                                 //System.out.println(query.getCount());
