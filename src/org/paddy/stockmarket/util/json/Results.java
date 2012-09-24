@@ -3,9 +3,7 @@
  * and open the template in the editor.
  */
 package org.paddy.stockmarket.util.json;
-
 import java.util.List;
-
 /**
  *
  * @author paddy (Patrick-Emil Zörner)

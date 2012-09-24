@@ -3,13 +3,11 @@
  * and open the template in the editor.
  */
 package org.paddy.stockmarket;
-
 /**
  *
  * @author paddy (Patrick-Emil Zörner)
  */
 public class Main {
-
     /**
      * @param args the command line arguments
      */

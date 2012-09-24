@@ -3,7 +3,6 @@
  * and open the template in the editor.
  */
 package org.paddy.stockmarket;
-
 import com.google.gson.Gson;
 import java.awt.Image;
 import java.awt.Toolkit;
@@ -39,14 +38,12 @@ import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.QueryContainer;
 import org.paddy.stockmarket.util.json.Quote;
 import org.paddy.stockmarket.util.json.Results;
-
 /**
  *
  * @author paddy (Patrick-Emil Zörner)
  */
 public class MainJFrame extends javax.swing.JFrame
 {
-
     /**
      * Creates new form MAinJFrame
      */
@@ -176,7 +173,6 @@ public class MainJFrame extends javax.swing.JFrame
         {
             stockSymbols.addAll(stockSymbolsFile);
         }
-
         if(stockSymbols.size()<100)
         {
             try
@@ -305,7 +301,6 @@ public class MainJFrame extends javax.swing.JFrame
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jDesktopPane1 = new javax.swing.JDesktopPane();
@@ -317,16 +312,11 @@ public class MainJFrame extends javax.swing.JFrame
         jMenuEdit = new javax.swing.JMenu();
         jMenuHelp = new javax.swing.JMenu();
         JMenuItemAbout = new javax.swing.JMenuItem();
-
         jMenuItem1.setText("jMenuItem1");
-
         jMenuItem2.setText("jMenuItem2");
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         jMenuFile.setMnemonic(KeyEvent.VK_F);
         jMenuFile.setText("File");
-
         jMenuItemNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemNew.setMnemonic(KeyEvent.VK_N);
         jMenuItemNew.setText("New");
@@ -336,7 +326,6 @@ public class MainJFrame extends javax.swing.JFrame
             }
         });
         jMenuFile.add(jMenuItemNew);
-
         jMenuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemOpen.setMnemonic(KeyEvent.VK_O);
         jMenuItemOpen.setText("Open");
@@ -346,7 +335,6 @@ public class MainJFrame extends javax.swing.JFrame
             }
         });
         jMenuFile.add(jMenuItemOpen);
-
         jMenuItemSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemSave.setText("Save");
         jMenuItemSave.addActionListener(new java.awt.event.ActionListener() {
@@ -355,23 +343,16 @@ public class MainJFrame extends javax.swing.JFrame
             }
         });
         jMenuFile.add(jMenuItemSave);
-
         jMenuBar1.add(jMenuFile);
-
         jMenuEdit.setText("Edit");
         jMenuBar1.add(jMenuEdit);
-
         jMenuHelp.setMnemonic(KeyEvent.VK_H);
         jMenuHelp.setText("Help");
-
         JMenuItemAbout.setMnemonic(KeyEvent.VK_A);
         JMenuItemAbout.setText("About");
         jMenuHelp.add(JMenuItemAbout);
-
         jMenuBar1.add(jMenuHelp);
-
         setJMenuBar(jMenuBar1);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -382,10 +363,8 @@ public class MainJFrame extends javax.swing.JFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jDesktopPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
         );
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
-
     private void jMenuItemNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNewActionPerformed
         if(stocksymbols != null)
         {
@@ -424,17 +403,14 @@ public class MainJFrame extends javax.swing.JFrame
                 JOptionPane.WARNING_MESSAGE);
         }
     }//GEN-LAST:event_jMenuItemNewActionPerformed
-
     private void jMenuItemOpenActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemOpenActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItemOpenActionPerformed
-
     private void jMenuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSaveActionPerformed
         String[] symbolsArray = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD=X","EURGBP=X","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
         stocksymbols = new HashSet<>(Arrays.asList(symbolsArray));
         setSymbols(stocksymbols);
     }//GEN-LAST:event_jMenuItemSaveActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem JMenuItemAbout;
     private javax.swing.JDesktopPane jDesktopPane1;

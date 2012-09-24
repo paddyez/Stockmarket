@@ -3,7 +3,6 @@
  * and open the template in the editor.
  */
 package org.paddy.stockmarket.util.json;
-
 /**
  *
  * @author paddy (Patrick-Emil Zörner)
