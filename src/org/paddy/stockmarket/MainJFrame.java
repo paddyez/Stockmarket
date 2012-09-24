@@ -7,6 +7,7 @@ import com.google.gson.Gson;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
+import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
@@ -17,21 +18,15 @@ import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.InetAddress;
 import java.net.MalformedURLException;
-import java.net.NetworkInterface;
-import java.net.SocketException;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Enumeration;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.swing.JOptionPane;
 import org.paddy.stockmarket.util.image.WindowIcons;
 import org.paddy.stockmarket.util.json.Query;
@@ -77,26 +72,6 @@ public class MainJFrame extends javax.swing.JFrame
             System.err.println(urise);
         }
         initComponents();
-        Enumeration<NetworkInterface> interfaces;
-        try {
-            interfaces = NetworkInterface.getNetworkInterfaces();
-            while (interfaces.hasMoreElements())
-            {
-                NetworkInterface interf = interfaces.nextElement();
-                if (interf.isUp() && !interf.isLoopback())
-                {
-                  System.out.println(interf.getName() + " up");
-                }
-                else
-                {
-                  System.out.println(interf.getName() + " down");
-                }
-            }
-        }
-        catch (SocketException ex)
-        {
-            Logger.getLogger(MainJFrame.class.getName()).log(Level.SEVERE, null, ex);
-        }
         stocksymbols = getSymbols();
     }
     /**
@@ -112,15 +87,20 @@ public class MainJFrame extends javax.swing.JFrame
         {
             try
             {
-                FileInputStream fis = new FileInputStream("Symbols");
-                int empty = fis.read();
+                FileInputStream fis;
+                BufferedInputStream bis;
+                fis = new FileInputStream("Symbols");
+                bis = new BufferedInputStream(fis);
+                bis.mark(1);
+                int empty = bis.read();
                 if(empty == -1)
                 {
                     System.err.println("File Symbols is empty!");
                 }
                 else
                 {
-                    ObjectInputStream ois = new ObjectInputStream(fis);
+                    bis.reset();
+                    ObjectInputStream ois = new ObjectInputStream(bis);
                     stockSymbols = (HashSet<String>) ois.readObject();
                 }
             }
@@ -148,15 +128,20 @@ public class MainJFrame extends javax.swing.JFrame
         {
             try
             {
-                FileInputStream fis = new FileInputStream("Symbols");
-                int empty = fis.read();
+                FileInputStream fis;
+                BufferedInputStream bis;
+                fis = new FileInputStream("Symbols");
+                bis = new BufferedInputStream(fis);
+                bis.mark(1);
+                int empty = bis.read();
                 if(empty == -1)
                 {
                     System.err.println("File Symbols is empty!");
                 }
                 else
                 {
-                    ObjectInputStream ois = new ObjectInputStream(fis);
+                    bis.reset();
+                    ObjectInputStream ois = new ObjectInputStream(bis);
                     stockSymbolsFile = (HashSet<String>) ois.readObject();
                 }
             }
@@ -372,28 +357,35 @@ public class MainJFrame extends javax.swing.JFrame
     private void jMenuItemNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNewActionPerformed
         if(stocksymbols != null)
         {
-            boolean reachable = false;
-            try
+            if(org.paddy.stockmarket.util.net.Network.isAInterfaceUp())
             {
-                reachable = InetAddress.getByName("query.yahooapis.com").isReachable(10000);
-                Iterator<String> iterator = stocksymbols.iterator();
-                String symbols;
-                symbols = "";
-                while (iterator.hasNext())
+                if(org.paddy.stockmarket.util.net.Network.isReachable(QUERY_YAHOOAPIS_COM))
                 {
-                    symbols += "\"" + iterator.next() + "\"";
-                    if(iterator.hasNext())
+                    Iterator<String> iterator = stocksymbols.iterator();
+                    String symbols;
+                    symbols = "";
+                    while (iterator.hasNext())
                     {
-                        symbols += ",";
+                        symbols += "\"" + iterator.next() + "\"";
+                        if(iterator.hasNext())
+                        {
+                            symbols += ",";
+                        }
                     }
+                    readPrices(symbols);
                 }
-                readPrices(symbols);
+                else
+                {
+                    JOptionPane.showMessageDialog(this,
+                        "Are you connected to the internet?\nMaybe your DNS-server is down?",
+                        "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+                }
             }
-            catch(IOException ioe)
+           else
             {
-                System.err.println(ioe);
                 JOptionPane.showMessageDialog(this,
-                    "Are you connected to the internet?\nMaybe your DNS-server is down?",
+                    "There seems no internet interface up other than loopback.\nCheck there is a connection.",
                     "Warning",
                     JOptionPane.WARNING_MESSAGE);
             }
@@ -429,5 +421,6 @@ public class MainJFrame extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItemSave;
     // End of variables declaration//GEN-END:variables
     public static final long serialVersionUID = 12345667890L;
+    private static final String QUERY_YAHOOAPIS_COM = "query.yahooapis.com";
     private HashSet<String> stocksymbols;
 }
