@@ -75,8 +75,19 @@ public class Network
              * This will return 0 if the host is reachable.
              * Otherwise, you will get "2" as a return value.
              */
-            Process process;
-            process = java.lang.Runtime.getRuntime().exec("ping -c 1 " + host);
+            Process process = null;
+            if(isOs("nux") || isOs("nix"))
+            {
+                process = java.lang.Runtime.getRuntime().exec("ping -c 1 " + host);
+            }
+            else if(isOs("win"))
+            {
+                process = java.lang.Runtime.getRuntime().exec("ping -n 1 " + host);
+            }
+            else
+            {
+                System.err.println("Unknown system or not yet supported.");
+            }  
             try
             {
                 int returnVal = process.waitFor();
@@ -100,5 +111,19 @@ public class Network
             System.err.println(ioe);
         }
         return reachable;
+    }
+    /**
+     * Possible Values are
+     * win for Windows
+     * mac for Mac
+     * nix and nux for Unix and Linux
+     * sunos for Solaris
+     * @param String identifier
+     * @return 
+     */
+    public static boolean isOs(String identifier) 
+    {
+            String os = System.getProperty("os.name").toLowerCase();
+            return (os.indexOf(identifier) >= 0);
     }
 }

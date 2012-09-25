@@ -46,11 +46,11 @@ public class MainJFrame extends javax.swing.JFrame
     {
         super("Stockmarkets");
         URL url = getClass().getResource("Stockmarket.png");
-        try
+        /*try
         {
             boolean exists = (new File(url.toURI())).exists();
             if(exists)
-            {
+            {*/
                 ArrayList<Image> imageList = WindowIcons.createScaledIcons(url);
                 if(imageList.size() == WindowIcons.getResolutionSize())
                 {
@@ -58,10 +58,10 @@ public class MainJFrame extends javax.swing.JFrame
                 }
                 else
                 {
-                    Image image = Toolkit.getDefaultToolkit().getImage(getClass().getResource("Stockmarket.png"));
+                    Image image = Toolkit.getDefaultToolkit().getImage(url);
                     this.setIconImage(image);
                 }
-            }
+            /*}
             else
             {
                 System.err.println("Iconfile: " + url + " does not exist!");
@@ -70,7 +70,7 @@ public class MainJFrame extends javax.swing.JFrame
         catch(URISyntaxException urise)
         {
             System.err.println(urise);
-        }
+        }*/
         initComponents();
         stocksymbols = getSymbols();
     }
