@@ -11,7 +11,7 @@ public class QueryContainer {
     protected Query query;
     /**
      *
-     * @return
+     * @return Query query
      */
     public Query getQuery()
     {

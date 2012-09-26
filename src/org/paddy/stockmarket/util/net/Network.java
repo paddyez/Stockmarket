@@ -12,13 +12,13 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 /**
  *
- * @author paddy
+ * @author paddy (Patrick-Emil Zörner)
  */
 public class Network
 {
     /**
      *
-     * @return
+     * @return boolean isInterfaceUp
      */
     public static boolean isAInterfaceUp()
     {
@@ -50,7 +50,7 @@ public class Network
     /**
      *
      * @param host
-     * @return
+     * @return boolean reachable
      */
     public static boolean isReachable(String host)
     {
@@ -119,8 +119,8 @@ public class Network
      * mac for Mac
      * nix and nux for Unix and Linux
      * sunos for Solaris
-     * @param String identifier
-     * @return 
+     * @param identifier String
+     * @return true when the identifier is found as substring
      */
     public static boolean isOs(String identifier) 
     {

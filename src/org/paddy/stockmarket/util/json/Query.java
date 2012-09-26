@@ -13,7 +13,7 @@ public class Query
     protected Results results;
     /**
      *
-     * @return
+     * @return int count
      */
     public int getCount()
     {
@@ -21,7 +21,7 @@ public class Query
     }
     /**
      *
-     * @return
+     * @return Results results
      */
     public Results getResults()
     {

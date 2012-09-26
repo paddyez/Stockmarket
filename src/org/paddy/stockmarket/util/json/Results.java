@@ -13,7 +13,7 @@ public class Results
     protected List<Quote> quote;
     /**
      *
-     * @return
+     * @return List<Quote> quote
      */
     public List<Quote> getQuote()
     {

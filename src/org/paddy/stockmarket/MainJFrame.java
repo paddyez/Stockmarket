@@ -66,7 +66,7 @@ public class MainJFrame extends javax.swing.JFrame
     }
     /**
      *
-     * @return
+     * @return HashSet<String> of stock symbols
      */
     @SuppressWarnings("unchecked")
     private HashSet<String> getSymbols()

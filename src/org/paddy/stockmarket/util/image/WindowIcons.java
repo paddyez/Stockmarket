@@ -33,33 +33,32 @@ public class WindowIcons
     }
     /**
      *
-     * @param imageResourceLocation
-     * @return
-     * @throws FileNotFoundException
+     * @param url URL
+     * @return static ArrayList<Image> 
      */
     public static ArrayList<Image> createScaledIcons(URL url)
     {
-        ArrayList<Image> list = new ArrayList<>();
+        ArrayList<Image> arrayList = new ArrayList<>();
         try
         {
             Image icon = ImageIO.read(url);
             for (int res : RESOLUTIONS)
             {
-                    list.add(createScaledImage(icon, res, res));
+                    arrayList.add(createScaledImage(icon, res, res));
             }
         }
         catch(IOException ioe)
         {
             System.err.println(ioe);
         }
-        return list;
+        return arrayList;
     }
     /**
      *
      * @param image
      * @param width
      * @param height
-     * @return
+     * @return BufferedImage scaledImage
      */
     private static BufferedImage createScaledImage(Image image, int width, int height)
     {
@@ -75,7 +74,7 @@ public class WindowIcons
     }
     /**
      * In GUI-Klasse kopieren und "imageIcons" des Frames mit Custom Code initialisieren:
-     * @return
+     * @return List<Image> list
      */
     private List<Image> getWindowIcons(URL url)
     {
@@ -85,7 +84,7 @@ public class WindowIcons
     }
     /**
      *
-     * @return
+     * @return int size
      */
     public static int getResolutionSize()
     {
