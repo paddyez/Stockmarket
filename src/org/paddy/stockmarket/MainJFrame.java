@@ -19,7 +19,6 @@ import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
-import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -178,12 +177,12 @@ public class MainJFrame extends javax.swing.JFrame
         try
         {
             String requestURI = "http://query.yahooapis.com/v1/public/yql?q=";
-            String YQLquery = URLEncoder.encode("select Name,Ask,AskRealtime,BidRealtime,StockExchange,DividendYield,PercentChange,Symbol,LastTradePriceOnly,Bid "
-                                                                                            + "from yahoo.finance.quotes "
-                                                                                            + "where symbol in (" + symbols + ") | sort(field=\"Name\", descending=\"true\")", "UTF-8");
+            String YQLquery = URLEncoder.encode("select * "
+                                                    + "from yahoo.finance.quotes "
+                                                    + "where symbol in (" + symbols + ") | sort(field=\"Name\", descending=\"true\")", "UTF-8");
             String GETparam = "&format=json"
-                                                    + "&diagnostics=true"
-                                                    + "&env=" + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
+                                + "&diagnostics=true"
+                                + "&env=" + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
             String request = requestURI + YQLquery + GETparam;
             try
             {
