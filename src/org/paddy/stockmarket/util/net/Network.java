@@ -30,14 +30,14 @@ public class Network
             while (interfaces.hasMoreElements())
             {
                 NetworkInterface interf = interfaces.nextElement();
-                if (interf.isUp() && !interf.isLoopback())
+                isInterfaceUp = interf.isUp();
+                if (isInterfaceUp && !interf.isLoopback())
                 {
-                    isInterfaceUp = true;
                     return isInterfaceUp;
                 }
                 else
                 {
-                    System.out.println(interf.getName() + " down");
+                    System.out.println(interf.getName() + " down.");
                 }
             }
         }
@@ -65,6 +65,7 @@ public class Network
                 reachable = inetAddress.isReachable(timeout);
                 if(reachable)
                 {
+                    System.out.println("Host: " + host + " is reachable.");
                     return reachable;
                 }
             }

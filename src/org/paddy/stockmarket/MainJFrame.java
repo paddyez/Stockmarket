@@ -45,32 +45,22 @@ public class MainJFrame extends javax.swing.JFrame
     public MainJFrame()
     {
         super("Stockmarkets");
-        URL url = getClass().getResource("Stockmarket.png");
-        /*try
+        URL url;
+        ArrayList<Image> imageList;
+        url = getClass().getResource("Stockmarket.png");
+        imageList = WindowIcons.createScaledIcons(url);
+        if(!imageList.isEmpty())
         {
-            boolean exists = (new File(url.toURI())).exists();
-            if(exists)
-            {*/
-                ArrayList<Image> imageList = WindowIcons.createScaledIcons(url);
-                if(imageList.size() == WindowIcons.getResolutionSize())
-                {
-                    this.setIconImages(imageList);
-                }
-                else
-                {
-                    Image image = Toolkit.getDefaultToolkit().getImage(url);
-                    this.setIconImage(image);
-                }
-            /*}
+            if(imageList.size() == WindowIcons.getResolutionSize())
+            {
+                this.setIconImages(imageList);
+            }
             else
             {
-                System.err.println("Iconfile: " + url + " does not exist!");
+                Image image = Toolkit.getDefaultToolkit().getImage(url);
+                this.setIconImage(image);
             }
         }
-        catch(URISyntaxException urise)
-        {
-            System.err.println(urise);
-        }*/
         initComponents();
         stocksymbols = getSymbols();
     }
