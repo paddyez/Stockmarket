@@ -34,9 +34,9 @@ public class Quote
      */
     protected String BookValue;
     /**
-     *
+     * NB: this is actually called Change&PercentChange might not work like this
      */
-    /* protected String Change&PercentChange; */
+    protected String ChangePercentChange;
     /**
      *
      */
@@ -378,15 +378,13 @@ public class Quote
             return BookValue;
     }
     /**
-     *
-     * @return String Change&PercentChange
+     * NB: this is actually called Change&PercentChange might not work like this
+     * @return String ChangePercentChange
      */
-    /*
-    public String getChange&PercentChange()
+    public String getChangePercentChange()
     {
-            return Change&PercentChange;
+            return ChangePercentChange;
     }
-    */
     /**
      *
      * @return String Change
@@ -1020,15 +1018,13 @@ public class Quote
         this.BookValue = BookValue;
     }
     /**
-     *
-     * @param Change&PercentChange String
+     * NB: this is actually called Change&PercentChange might not work like this
+     * @param ChangePercentChange String
      */
-    /*
-    public void setChange&PercentChange(String Change&PercentChange)
+    public void setChangePercentChange(String ChangePercentChange)
     {
-        this.Change&PercentChange = Change&PercentChange;
+        this.ChangePercentChange = ChangePercentChange;
     }
-    */
     /**
      *
      * @param Change String

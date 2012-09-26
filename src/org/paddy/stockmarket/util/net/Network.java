@@ -88,7 +88,7 @@ public class Network
             else
             {
                 System.err.println("Unknown system or not yet supported.");
-            }  
+            }
             try
             {
                 int returnVal = process.waitFor();
@@ -122,7 +122,7 @@ public class Network
      * @param identifier String
      * @return true when the identifier is found as substring
      */
-    public static boolean isOs(String identifier) 
+    public static boolean isOs(String identifier)
     {
             String os = System.getProperty("os.name").toLowerCase();
             return (os.indexOf(identifier) >= 0);

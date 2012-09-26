@@ -34,7 +34,7 @@ public class WindowIcons
     /**
      *
      * @param url URL
-     * @return static ArrayList<Image> 
+     * @return static ArrayList<Image>
      */
     public static ArrayList<Image> createScaledIcons(URL url)
     {
