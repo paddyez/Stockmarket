@@ -3,6 +3,11 @@
  * and open the template in the editor.
  */
 package org.paddy.stockmarket;
+import java.awt.Dimension;
+import java.awt.GraphicsDevice;
+import java.awt.GraphicsEnvironment;
+import java.awt.HeadlessException;
+import java.awt.Toolkit;
 /**
  *
  * @author paddy (Patrick-Emil Zörner)
@@ -34,6 +39,52 @@ public class Main {
             public void run() {
                 MainJFrame mainJFrame;
                 mainJFrame = new MainJFrame();
+                /*
+                 * Set the Fram size and position
+                 */
+                GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
+                int numberOfScreens = 1;
+                int width;
+                int height;
+                try 
+                {
+                    GraphicsDevice[] gs = ge.getScreenDevices();
+                    numberOfScreens = gs.length;
+                }
+                catch (HeadlessException he)
+                {
+                    System.err.println(he);
+                }
+                Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
+                if(numberOfScreens > 1)
+                {
+                    width = screenSize.width;
+                    height = screenSize.height;
+                    if(screenSize.width > screenSize.height)
+                    {
+                        width = screenSize.width/numberOfScreens;                        
+                    }
+                    else
+                    {
+                        height = screenSize.height/numberOfScreens;
+                    }
+                }
+                else
+                {
+                    width = screenSize.width;
+                    height = screenSize.height;
+                }
+                mainJFrame.setSize(new Dimension((width/2),(height/2)));
+                Dimension frameSize = mainJFrame.getSize();
+                if (frameSize.height > height)
+                {
+                    frameSize.height = height;
+                }
+                if (frameSize.width > width)
+                {
+                    frameSize.width = width;
+                }
+                mainJFrame.setLocation((width - frameSize.width) / 2, (height - frameSize.height) / 2);
                 mainJFrame.setVisible(true);
             }
         });

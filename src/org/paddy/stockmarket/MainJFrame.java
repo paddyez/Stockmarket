@@ -4,6 +4,7 @@
  */
 package org.paddy.stockmarket;
 import com.google.gson.Gson;
+import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
@@ -23,10 +24,15 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import javax.swing.JInternalFrame;
 import javax.swing.JOptionPane;
+import javax.swing.JScrollPane;
+import javax.swing.JTable;
+import javax.swing.table.TableColumn;
 import org.paddy.stockmarket.util.image.WindowIcons;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.QueryContainer;
@@ -174,15 +180,25 @@ public class MainJFrame extends javax.swing.JFrame
      */
     private void readPrices(String symbols)
     {
+        Date date = new Date();
+        JInternalFrame jInternalFrame=new JInternalFrame("Prices on: "+date.toString(),
+                                                         true, //resizable
+                                                         true, //closable
+                                                         true, //maximizable
+                                                         true);
+        Object[][] rowData = new Object[stocksymbols.size()][6];
+        JTable table = new JTable(rowData, COLUMN_NAMES);
         try
         {
             String requestURI = "http://query.yahooapis.com/v1/public/yql?q=";
-            String YQLquery = URLEncoder.encode("select * "
-                                                    + "from yahoo.finance.quotes "
-                                                    + "where symbol in (" + symbols + ") | sort(field=\"Name\", descending=\"true\")", "UTF-8");
-            String GETparam = "&format=json"
-                                + "&diagnostics=true"
-                                + "&env=" + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
+            String YQLquery = URLEncoder.encode("select * " +
+                                                    "from yahoo.finance.quotes " +
+                                                    "where symbol in (" + 
+                                                    symbols +
+                                                    ") | sort(field=\"Name\", descending=\"false\")", "UTF-8");
+            String GETparam = "&format=json" +
+                                "&diagnostics=true" +
+                                "&env=" + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
             String request = requestURI + YQLquery + GETparam;
             try
             {
@@ -207,20 +223,34 @@ public class MainJFrame extends javax.swing.JFrame
                     Results results = query.getResults();
                     List<Quote> quotes = results.getQuote();
                     Iterator<Quote> iterator = quotes.iterator();
+                    int i=0;
                     while (iterator.hasNext())
                     {
                         Quote quote = iterator.next();
+                        String symbol = quote.getSymbol();
+                        rowData[i][0] = symbol;
                         String name = quote.getName();
+                        rowData[i][1] = name;
                         String bidRealtime = quote.getBidRealtime();
+                        rowData[i][2] = bidRealtime;
                         String lastTradePriceOnly = quote.getLastTradePriceOnly();
                         String bidString = quote.getBid();
+                        String changeFromFiftydayMovingAverage = quote.getChangeFromFiftydayMovingAverage();
+                        rowData[i][3] = changeFromFiftydayMovingAverage;
+                        String changeFromTwoHundreddayMovingAverage = quote.getChangeFromTwoHundreddayMovingAverage();
+                        rowData[i][4] = changeFromTwoHundreddayMovingAverage;
+                        String changeInPercent = quote.getChangeinPercent();
+                        rowData[i][5] = changeInPercent;
                         float bid;
                         if(bidRealtime != null)
                         {
                             try
                             {
                                 bid = Float.parseFloat(bidRealtime);
-                                System.out.println(name + ": " + bid);
+                                System.out.println(name + ": " + bid +
+                                        " ChangeFromFiftydayMovingAverage:"+changeFromFiftydayMovingAverage +
+                                        " ChangeFromTwoHundreddayMovingAverage :" + changeFromTwoHundreddayMovingAverage +
+                                        " ChangeinPercent:" + changeInPercent);
                             }
                             catch(NumberFormatException nfe)
                             {
@@ -232,6 +262,7 @@ public class MainJFrame extends javax.swing.JFrame
                             try
                             {
                                 float lastPrice = Float.parseFloat(lastTradePriceOnly);
+                                rowData[i][2] = lastTradePriceOnly;
                                 System.out.println(name + ": " + lastPrice);
                             }
                             catch(NumberFormatException nfe)
@@ -244,6 +275,7 @@ public class MainJFrame extends javax.swing.JFrame
                             try
                             {
                                 bid = Float.parseFloat(bidString);
+                                rowData[i][2] = bidString;
                                 System.out.println(name + ": " + bid);
                             }
                             catch(NumberFormatException nfe)
@@ -255,6 +287,7 @@ public class MainJFrame extends javax.swing.JFrame
                         {
                                 System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
                         }
+                        i++;
                     }
                 }
                 catch(IOException ioe)
@@ -271,6 +304,15 @@ public class MainJFrame extends javax.swing.JFrame
         {
                 System.err.println(uee);
         }
+        TableColumn column = null;
+        JScrollPane scrollPane = new JScrollPane(table);
+        table.setPreferredScrollableViewportSize(new Dimension(800, 350));
+        jInternalFrame.getContentPane().add(scrollPane);
+        jInternalFrame.setSize(jInternalFrame.getPreferredSize());
+        int openFrameCount=jDesktopPane1.getAllFrames().length;
+        jInternalFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
+        jDesktopPane1.add(jInternalFrame);
+        jInternalFrame.setVisible(true);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -280,6 +322,7 @@ public class MainJFrame extends javax.swing.JFrame
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
+
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jDesktopPane1 = new javax.swing.JDesktopPane();
@@ -291,11 +334,16 @@ public class MainJFrame extends javax.swing.JFrame
         jMenuEdit = new javax.swing.JMenu();
         jMenuHelp = new javax.swing.JMenu();
         JMenuItemAbout = new javax.swing.JMenuItem();
+
         jMenuItem1.setText("jMenuItem1");
+
         jMenuItem2.setText("jMenuItem2");
+
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
         jMenuFile.setMnemonic(KeyEvent.VK_F);
         jMenuFile.setText("File");
+
         jMenuItemNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemNew.setMnemonic(KeyEvent.VK_N);
         jMenuItemNew.setText("New");
@@ -305,6 +353,7 @@ public class MainJFrame extends javax.swing.JFrame
             }
         });
         jMenuFile.add(jMenuItemNew);
+
         jMenuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemOpen.setMnemonic(KeyEvent.VK_O);
         jMenuItemOpen.setText("Open");
@@ -314,6 +363,7 @@ public class MainJFrame extends javax.swing.JFrame
             }
         });
         jMenuFile.add(jMenuItemOpen);
+
         jMenuItemSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemSave.setText("Save");
         jMenuItemSave.addActionListener(new java.awt.event.ActionListener() {
@@ -322,16 +372,23 @@ public class MainJFrame extends javax.swing.JFrame
             }
         });
         jMenuFile.add(jMenuItemSave);
+
         jMenuBar1.add(jMenuFile);
+
         jMenuEdit.setText("Edit");
         jMenuBar1.add(jMenuEdit);
+
         jMenuHelp.setMnemonic(KeyEvent.VK_H);
         jMenuHelp.setText("Help");
+
         JMenuItemAbout.setMnemonic(KeyEvent.VK_A);
         JMenuItemAbout.setText("About");
         jMenuHelp.add(JMenuItemAbout);
+
         jMenuBar1.add(jMenuHelp);
+
         setJMenuBar(jMenuBar1);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -340,8 +397,9 @@ public class MainJFrame extends javax.swing.JFrame
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jDesktopPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 351, Short.MAX_VALUE)
+            .addComponent(jDesktopPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
         );
+
         pack();
     }// </editor-fold>//GEN-END:initComponents
     private void jMenuItemNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNewActionPerformed
@@ -413,4 +471,19 @@ public class MainJFrame extends javax.swing.JFrame
     public static final long serialVersionUID = 12345667890L;
     private static final String QUERY_YAHOOAPIS_COM = "query.yahooapis.com";
     private HashSet<String> stocksymbols;
+    /**
+     * The column names for the table with the stock prices and other
+     * information.
+     */
+    private final String[] COLUMN_NAMES = {"Symbol",
+                                           "Name",
+                                           "Price",
+                                           "Change from 50 day moving average",
+                                           "Change from 200 day moving average",
+                                           "Change in %"};
+    /**
+     * The x and y offset of the desktop displayed by the main frame
+     * @see #MAIN_FRAME_DESKTOP
+     */
+    static final int xOffset = 20, yOffset = 20;
 }

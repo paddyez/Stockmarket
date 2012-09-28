@@ -8,28 +8,28 @@ package org.paddy.stockmarket.util.json;
  * <code>
  * &lt;?php<br />
  * $availableFields= array('Ask','AverageDailyVolume','Bid','AskRealtime',<br />
- * 'BidRealtime','BookValue','Change&PercentChange','Change','Commission',<br />
- * 'ChangeRealtime','AfterHoursChangeRealtime','DividendShare','LastTradeDate',<br />
- * 'TradeDate','EarningsShare','ErrorIndicationreturnedforsymbolchangedinvalid',<br />
- * 'EPSEstimateCurrentYear','EPSEstimateNextYear','EPSEstimateNextQuarter',<br />
- * 'DaysLow','DaysHigh','YearLow','YearHigh','HoldingsGainPercent',<br />
- * 'AnnualizedGain','HoldingsGain','HoldingsGainPercentRealtime',<br />
- * 'HoldingsGainRealtime','MoreInfo','OrderBookRealtime','MarketCapitalization',<br />
- * 'MarketCapRealtime','EBITDA','ChangeFromYearLow','PercentChangeFromYearLow',<br />
- * 'LastTradeRealtimeWithTime','ChangePercentRealtime','ChangeFromYearHigh',<br />
- * 'PercebtChangeFromYearHigh','LastTradeWithTime','LastTradePriceOnly',<br />
- * 'HighLimit','LowLimit','DaysRange','DaysRangeRealtime',<br />
- * 'FiftydayMovingAverage','TwoHundreddayMovingAverage',<br />
- * 'ChangeFromTwoHundreddayMovingAverage',<br />
- * 'PercentChangeFromTwoHundreddayMovingAverage',<br />
- * 'ChangeFromFiftydayMovingAverage','PercentChangeFromFiftydayMovingAverage',<br />
- * 'Name','Notes','Open','PreviousClose','PricePaid','ChangeinPercent',<br />
- * 'PriceSales','PriceBook','ExDividendDate','PERatio','DividendPayDate',<br />
- * 'PERatioRealtime','PEGRatio','PriceEPSEstimateCurrentYear',<br />
- * 'PriceEPSEstimateNextYear','Symbol','SharesOwned','ShortRatio',<br />
- * 'LastTradeTime','TickerTrend','OneyrTargetPrice','Volume','HoldingsValue',<br />
- * 'HoldingsValueRealtime','YearRange','DaysValueChange',<br />
- * 'DaysValueChangeRealtime','StockExchange','DividendYield');<br /><br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'BidRealtime','BookValue','Change&PercentChange','Change','Commission',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'ChangeRealtime','AfterHoursChangeRealtime','DividendShare','LastTradeDate',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'TradeDate','EarningsShare','ErrorIndicationreturnedforsymbolchangedinvalid',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'EPSEstimateCurrentYear','EPSEstimateNextYear','EPSEstimateNextQuarter',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'DaysLow','DaysHigh','YearLow','YearHigh','HoldingsGainPercent',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'AnnualizedGain','HoldingsGain','HoldingsGainPercentRealtime',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'HoldingsGainRealtime','MoreInfo','OrderBookRealtime','MarketCapitalization',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'MarketCapRealtime','EBITDA','ChangeFromYearLow','PercentChangeFromYearLow',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'LastTradeRealtimeWithTime','ChangePercentRealtime','ChangeFromYearHigh',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'PercebtChangeFromYearHigh','LastTradeWithTime','LastTradePriceOnly',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'HighLimit','LowLimit','DaysRange','DaysRangeRealtime',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'FiftydayMovingAverage','TwoHundreddayMovingAverage',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'ChangeFromTwoHundreddayMovingAverage',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'PercentChangeFromTwoHundreddayMovingAverage',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'ChangeFromFiftydayMovingAverage','PercentChangeFromFiftydayMovingAverage',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'Name','Notes','Open','PreviousClose','PricePaid','ChangeinPercent',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'PriceSales','PriceBook','ExDividendDate','PERatio','DividendPayDate',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'PERatioRealtime','PEGRatio','PriceEPSEstimateCurrentYear',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'PriceEPSEstimateNextYear','Symbol','SharesOwned','ShortRatio',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'LastTradeTime','TickerTrend','OneyrTargetPrice','Volume','HoldingsValue',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'HoldingsValueRealtime','YearRange','DaysValueChange',<br />
+ * &nbsp;&nbsp;&nbsp;&nbsp;'DaysValueChangeRealtime','StockExchange','DividendYield');<br /><br />
  * foreach($availableFields as $value)<br />
  * {<br />
  * &nbsp;&nbsp;&nbsp;&nbsp;echo '    /**<br />
