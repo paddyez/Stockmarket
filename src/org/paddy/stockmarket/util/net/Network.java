@@ -37,7 +37,7 @@ public class Network
                 }
                 else
                 {
-                    System.out.println(interf.getName() + " down.");
+                    //System.out.println(interf.getName() + " down.");
                 }
             }
         }

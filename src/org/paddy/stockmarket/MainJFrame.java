@@ -247,10 +247,12 @@ public class MainJFrame extends javax.swing.JFrame
                             try
                             {
                                 bid = Float.parseFloat(bidRealtime);
+                                /*
                                 System.out.println(name + ": " + bid +
                                         " ChangeFromFiftydayMovingAverage:"+changeFromFiftydayMovingAverage +
                                         " ChangeFromTwoHundreddayMovingAverage :" + changeFromTwoHundreddayMovingAverage +
                                         " ChangeinPercent:" + changeInPercent);
+                                */
                             }
                             catch(NumberFormatException nfe)
                             {
@@ -263,7 +265,7 @@ public class MainJFrame extends javax.swing.JFrame
                             {
                                 float lastPrice = Float.parseFloat(lastTradePriceOnly);
                                 rowData[i][2] = lastTradePriceOnly;
-                                System.out.println(name + ": " + lastPrice);
+                                //System.out.println(name + ": " + lastPrice);
                             }
                             catch(NumberFormatException nfe)
                             {
@@ -276,7 +278,7 @@ public class MainJFrame extends javax.swing.JFrame
                             {
                                 bid = Float.parseFloat(bidString);
                                 rowData[i][2] = bidString;
-                                System.out.println(name + ": " + bid);
+                                //System.out.println(name + ": " + bid);
                             }
                             catch(NumberFormatException nfe)
                             {
@@ -306,13 +308,20 @@ public class MainJFrame extends javax.swing.JFrame
         }
         TableColumn column = null;
         JScrollPane scrollPane = new JScrollPane(table);
-        table.setPreferredScrollableViewportSize(new Dimension(800, 350));
+        table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
         jInternalFrame.getContentPane().add(scrollPane);
         jInternalFrame.setSize(jInternalFrame.getPreferredSize());
         int openFrameCount=jDesktopPane1.getAllFrames().length;
         jInternalFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
         jDesktopPane1.add(jInternalFrame);
         jInternalFrame.setVisible(true);
+    }
+    /**
+     * 
+     */
+    public void setScrollableViewportSize(int width, int height)
+    {
+        this.preferredScrollableViewportSize = new Dimension(width, height);
     }
     /**
      * This method is called from within the constructor to initialize the form.
@@ -481,6 +490,7 @@ public class MainJFrame extends javax.swing.JFrame
                                            "Change from 50 day moving average",
                                            "Change from 200 day moving average",
                                            "Change in %"};
+    private Dimension preferredScrollableViewportSize = new Dimension(800, 350);
     /**
      * The x and y offset of the desktop displayed by the main frame
      * @see #MAIN_FRAME_DESKTOP

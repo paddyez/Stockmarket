@@ -85,6 +85,8 @@ public class Main {
                     frameSize.width = width;
                 }
                 mainJFrame.setLocation((width - frameSize.width) / 2, (height - frameSize.height) / 2);
+                int scrollableViewportWidth = (width/2)-75, scrollableViewportHeight = (height/2)-125;
+                mainJFrame.setScrollableViewportSize(scrollableViewportWidth, scrollableViewportHeight);
                 mainJFrame.setVisible(true);
             }
         });
