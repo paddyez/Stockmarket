@@ -34,6 +34,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 import org.paddy.stockmarket.util.image.WindowIcons;
+import org.paddy.stockmarket.util.json.Diagnostics;
+import org.paddy.stockmarket.util.json.Javascript;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.QueryContainer;
 import org.paddy.stockmarket.util.json.Quote;
@@ -181,6 +183,7 @@ public class MainJFrame extends javax.swing.JFrame
     private void readPrices(String symbols)
     {
         Date date = new Date();
+        boolean yahooFinanceQuotesBlocked = false;
         JInternalFrame jInternalFrame=new JInternalFrame("Prices on: "+date.toString(),
                                                          true, //resizable
                                                          true, //closable
@@ -221,75 +224,89 @@ public class MainJFrame extends javax.swing.JFrame
                     Query query = queryContainer.getQuery();
                     //System.out.println(query.getCount());
                     Results results = query.getResults();
-                    List<Quote> quotes = results.getQuote();
-                    Iterator<Quote> iterator = quotes.iterator();
-                    int i=0;
-                    while (iterator.hasNext())
+                    if(results == null)
                     {
-                        Quote quote = iterator.next();
-                        String symbol = quote.getSymbol();
-                        rowData[i][0] = symbol;
-                        String name = quote.getName();
-                        rowData[i][1] = name;
-                        String bidRealtime = quote.getBidRealtime();
-                        rowData[i][2] = bidRealtime;
-                        String lastTradePriceOnly = quote.getLastTradePriceOnly();
-                        String bidString = quote.getBid();
-                        String changeFromFiftydayMovingAverage = quote.getChangeFromFiftydayMovingAverage();
-                        rowData[i][3] = changeFromFiftydayMovingAverage;
-                        String changeFromTwoHundreddayMovingAverage = quote.getChangeFromTwoHundreddayMovingAverage();
-                        rowData[i][4] = changeFromTwoHundreddayMovingAverage;
-                        String changeInPercent = quote.getChangeinPercent();
-                        rowData[i][5] = changeInPercent;
-                        float bid;
-                        if(bidRealtime != null)
+                        yahooFinanceQuotesBlocked = true;
+                        Diagnostics diagnostics = query.getDiagnostics();
+                        Javascript javascript = diagnostics.getJavascript();
+                        String content = javascript.getContent();
+                        JOptionPane.showMessageDialog(this,
+                            content,
+                            "YAHOO Errog",
+                            JOptionPane.ERROR_MESSAGE);
+                    }
+                    else
+                    {        
+                        List<Quote> quotes = results.getQuote();
+                        Iterator<Quote> iterator = quotes.iterator();
+                        int i=0;
+                        while (iterator.hasNext())
                         {
-                            try
+                            Quote quote = iterator.next();
+                            String symbol = quote.getSymbol();
+                            rowData[i][0] = symbol;
+                            String name = quote.getName();
+                            rowData[i][1] = name;
+                            String bidRealtime = quote.getBidRealtime();
+                            rowData[i][2] = bidRealtime;
+                            String lastTradePriceOnly = quote.getLastTradePriceOnly();
+                            String bidString = quote.getBid();
+                            String changeFromFiftydayMovingAverage = quote.getChangeFromFiftydayMovingAverage();
+                            rowData[i][3] = changeFromFiftydayMovingAverage;
+                            String changeFromTwoHundreddayMovingAverage = quote.getChangeFromTwoHundreddayMovingAverage();
+                            rowData[i][4] = changeFromTwoHundreddayMovingAverage;
+                            String changeInPercent = quote.getChangeinPercent();
+                            rowData[i][5] = changeInPercent;
+                            float bid;
+                            if(bidRealtime != null)
                             {
-                                bid = Float.parseFloat(bidRealtime);
-                                /*
-                                System.out.println(name + ": " + bid +
-                                        " ChangeFromFiftydayMovingAverage:"+changeFromFiftydayMovingAverage +
-                                        " ChangeFromTwoHundreddayMovingAverage :" + changeFromTwoHundreddayMovingAverage +
-                                        " ChangeinPercent:" + changeInPercent);
-                                */
+                                try
+                                {
+                                    bid = Float.parseFloat(bidRealtime);
+                                    /*
+                                    System.out.println(name + ": " + bid +
+                                            " ChangeFromFiftydayMovingAverage:"+changeFromFiftydayMovingAverage +
+                                            " ChangeFromTwoHundreddayMovingAverage :" + changeFromTwoHundreddayMovingAverage +
+                                            " ChangeinPercent:" + changeInPercent);
+                                    */
+                                }
+                                catch(NumberFormatException nfe)
+                                {
+                                    System.err.println(nfe);
+                                }
                             }
-                            catch(NumberFormatException nfe)
+                            else if(lastTradePriceOnly != null)
                             {
-                                System.err.println(nfe);
+                                try
+                                {
+                                    float lastPrice = Float.parseFloat(lastTradePriceOnly);
+                                    rowData[i][2] = lastTradePriceOnly;
+                                    //System.out.println(name + ": " + lastPrice);
+                                }
+                                catch(NumberFormatException nfe)
+                                {
+                                    System.err.println(nfe);
+                                }
                             }
+                            else if(bidString != null)
+                            {
+                                try
+                                {
+                                    bid = Float.parseFloat(bidString);
+                                    rowData[i][2] = bidString;
+                                    //System.out.println(name + ": " + bid);
+                                }
+                                catch(NumberFormatException nfe)
+                                {
+                                    System.err.println(nfe);
+                                }
+                            }
+                            else
+                            {
+                                    System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
+                            }
+                            i++;
                         }
-                        else if(lastTradePriceOnly != null)
-                        {
-                            try
-                            {
-                                float lastPrice = Float.parseFloat(lastTradePriceOnly);
-                                rowData[i][2] = lastTradePriceOnly;
-                                //System.out.println(name + ": " + lastPrice);
-                            }
-                            catch(NumberFormatException nfe)
-                            {
-                                System.err.println(nfe);
-                            }
-                        }
-                        else if(bidString != null)
-                        {
-                            try
-                            {
-                                bid = Float.parseFloat(bidString);
-                                rowData[i][2] = bidString;
-                                //System.out.println(name + ": " + bid);
-                            }
-                            catch(NumberFormatException nfe)
-                            {
-                                System.err.println(nfe);
-                            }
-                        }
-                        else
-                        {
-                                System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
-                        }
-                        i++;
                     }
                 }
                 catch(IOException ioe)
@@ -306,15 +323,25 @@ public class MainJFrame extends javax.swing.JFrame
         {
                 System.err.println(uee);
         }
-        TableColumn column = null;
-        JScrollPane scrollPane = new JScrollPane(table);
-        table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
-        jInternalFrame.getContentPane().add(scrollPane);
-        jInternalFrame.setSize(jInternalFrame.getPreferredSize());
-        int openFrameCount=jDesktopPane1.getAllFrames().length;
-        jInternalFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
-        jDesktopPane1.add(jInternalFrame);
-        jInternalFrame.setVisible(true);
+        if(yahooFinanceQuotesBlocked)
+        {
+            jInternalFrame.dispose();
+            jInternalFrame = null;
+            table = null;
+            rowData = null;
+        }
+        else
+        {
+            TableColumn column = null;
+            JScrollPane scrollPane = new JScrollPane(table);
+            table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
+            jInternalFrame.getContentPane().add(scrollPane);
+            jInternalFrame.setSize(jInternalFrame.getPreferredSize());
+            int openFrameCount=jDesktopPane1.getAllFrames().length;
+            jInternalFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
+            jDesktopPane1.add(jInternalFrame);
+            jInternalFrame.setVisible(true);
+        }
     }
     /**
      * 
