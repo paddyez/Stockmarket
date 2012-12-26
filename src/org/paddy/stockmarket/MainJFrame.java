@@ -1,7 +1,3 @@
-/*
- * To change this template, choose Tools | Templates
- * and open the template in the editor.
- */
 package org.paddy.stockmarket;
 import com.google.gson.Gson;
 import java.awt.Dimension;
