@@ -508,7 +508,7 @@ public class MainJFrame extends javax.swing.JFrame
         shrink = 20;
         if(managerDialog == null)
         {
-            managerDialog = new StocksManagerDialog(this);
+            managerDialog = new StockManagerDialog(this, true);
         }
         managerDialog.setSymbols(stocksymbols);
         /* Calculate location and dimansion of the frame */
@@ -540,7 +540,7 @@ public class MainJFrame extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItemSave;
     // End of variables declaration//GEN-END:variables
     public static final long serialVersionUID = 12345667890L;
-    private static StocksManagerDialog managerDialog;
+    private static StockManagerDialog managerDialog;
     private static final String QUERY_YAHOOAPIS_COM = "query.yahooapis.com";
     private HashSet<String> stocksymbols;
     /**
