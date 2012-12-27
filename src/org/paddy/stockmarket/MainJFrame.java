@@ -2,6 +2,7 @@ package org.paddy.stockmarket;
 import com.google.gson.Gson;
 import java.awt.Dimension;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.BufferedInputStream;
@@ -60,7 +61,7 @@ public class MainJFrame extends javax.swing.JFrame
             }
             else
             {
-                Image image = Toolkit.getDefaultToolkit().getImage(url);
+                image = Toolkit.getDefaultToolkit().getImage(url);
                 this.setIconImage(image);
             }
         }
@@ -364,6 +365,7 @@ public class MainJFrame extends javax.swing.JFrame
         jMenuItemOpen = new javax.swing.JMenuItem();
         jMenuItemSave = new javax.swing.JMenuItem();
         jMenuEdit = new javax.swing.JMenu();
+        jMenuItem3 = new javax.swing.JMenuItem();
         jMenuHelp = new javax.swing.JMenu();
         JMenuItemAbout = new javax.swing.JMenuItem();
 
@@ -407,7 +409,20 @@ public class MainJFrame extends javax.swing.JFrame
 
         jMenuBar1.add(jMenuFile);
 
+        jMenuEdit.setMnemonic(KeyEvent.VK_E);
         jMenuEdit.setText("Edit");
+
+        jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
+        jMenuItem3.setMnemonic(KeyEvent.VK_S);
+        jMenuItem3.setText("Stocks");
+        jMenuItem3.setToolTipText("");
+        jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                jMenuItemEditStocksActionPerformed(evt);
+            }
+        });
+        jMenuEdit.add(jMenuItem3);
+
         jMenuBar1.add(jMenuEdit);
 
         jMenuHelp.setMnemonic(KeyEvent.VK_H);
@@ -487,6 +502,29 @@ public class MainJFrame extends javax.swing.JFrame
         stocksymbols = new HashSet<>(Arrays.asList(symbolsArray));
         setSymbols(stocksymbols);
     }//GEN-LAST:event_jMenuItemSaveActionPerformed
+
+    private void jMenuItemEditStocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemEditStocksActionPerformed
+        int lx, ly, width, height, shrink;
+        shrink = 20;
+        if(managerDialog == null)
+        {
+            managerDialog = new StocksManagerDialog(this);
+        }
+        managerDialog.setSymbols(stocksymbols);
+        /* Calculate location and dimansion of the frame */
+        lx = (int)getLocationOnScreen().getX()+shrink/2;
+        ly = (int)getLocationOnScreen().getY()+shrink/2;
+        Point managerLocation = new Point(lx, ly);
+        width = (int)getSize().getWidth() - shrink;
+        height = (int)getSize().getHeight() - shrink;
+        Dimension stockManagerSize = new Dimension(width, height);
+        /* Now set location and dimension */
+        managerDialog.setLocation(managerLocation);
+        managerDialog.setSize(stockManagerSize);
+        managerDialog.setIconImage(image);
+        managerDialog.setVisible(true);
+    }//GEN-LAST:event_jMenuItemEditStocksActionPerformed
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem JMenuItemAbout;
     private javax.swing.JDesktopPane jDesktopPane1;
@@ -496,11 +534,13 @@ public class MainJFrame extends javax.swing.JFrame
     private javax.swing.JMenu jMenuHelp;
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JMenuItem jMenuItem2;
+    private javax.swing.JMenuItem jMenuItem3;
     private javax.swing.JMenuItem jMenuItemNew;
     private javax.swing.JMenuItem jMenuItemOpen;
     private javax.swing.JMenuItem jMenuItemSave;
     // End of variables declaration//GEN-END:variables
     public static final long serialVersionUID = 12345667890L;
+    private static StocksManagerDialog managerDialog;
     private static final String QUERY_YAHOOAPIS_COM = "query.yahooapis.com";
     private HashSet<String> stocksymbols;
     /**
@@ -513,6 +553,7 @@ public class MainJFrame extends javax.swing.JFrame
                                            "Change from 50 day moving average",
                                            "Change from 200 day moving average",
                                            "Change in %"};
+    private Image image;
     private Dimension preferredScrollableViewportSize = new Dimension(800, 350);
     /**
      * The x and y offset of the desktop displayed by the main frame
