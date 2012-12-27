@@ -505,7 +505,7 @@ public class MainJFrame extends javax.swing.JFrame
 
     private void jMenuItemEditStocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemEditStocksActionPerformed
         int lx, ly, width, height, shrink;
-        shrink = 20;
+        shrink = 50;
         if(managerDialog == null)
         {
             managerDialog = new StockManagerDialog(this, true);
