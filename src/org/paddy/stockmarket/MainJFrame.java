@@ -506,11 +506,11 @@ public class MainJFrame extends javax.swing.JFrame
     private void jMenuItemEditStocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemEditStocksActionPerformed
         int lx, ly, width, height, shrink;
         shrink = 50;
-        if(managerDialog == null)
+        if(stockManagerDialog == null)
         {
-            managerDialog = new StockManagerDialog(this, true);
+            stockManagerDialog = new stockManagerDialog(this, true);
         }
-        managerDialog.setSymbols(stocksymbols);
+        stockManagerDialog.setSymbols(stocksymbols);
         /* Calculate location and dimansion of the frame */
         lx = (int)getLocationOnScreen().getX()+shrink/2;
         ly = (int)getLocationOnScreen().getY()+shrink/2;
@@ -519,10 +519,10 @@ public class MainJFrame extends javax.swing.JFrame
         height = (int)getSize().getHeight() - shrink;
         Dimension stockManagerSize = new Dimension(width, height);
         /* Now set location and dimension */
-        managerDialog.setLocation(managerLocation);
-        managerDialog.setSize(stockManagerSize);
-        managerDialog.setIconImage(image);
-        managerDialog.setVisible(true);
+        stockManagerDialog.setLocation(managerLocation);
+        stockManagerDialog.setSize(stockManagerSize);
+        stockManagerDialog.setIconImage(image);
+        stockManagerDialog.setVisible(true);
     }//GEN-LAST:event_jMenuItemEditStocksActionPerformed
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
@@ -540,7 +540,7 @@ public class MainJFrame extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItemSave;
     // End of variables declaration//GEN-END:variables
     public static final long serialVersionUID = 12345667890L;
-    private static StockManagerDialog managerDialog;
+    private static stockManagerDialog stockManagerDialog;
     private static final String QUERY_YAHOOAPIS_COM = "query.yahooapis.com";
     private HashSet<String> stocksymbols;
     /**
