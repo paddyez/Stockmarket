@@ -1,22 +1,18 @@
 package org.paddy.stockmarket;
-import com.google.gson.Gson;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
 import java.awt.Toolkit;
 import java.awt.event.KeyEvent;
 import java.io.BufferedInputStream;
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.UnsupportedEncodingException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -34,7 +30,6 @@ import org.paddy.stockmarket.util.image.WindowIcons;
 import org.paddy.stockmarket.util.json.Diagnostics;
 import org.paddy.stockmarket.util.json.Javascript;
 import org.paddy.stockmarket.util.json.Query;
-import org.paddy.stockmarket.util.json.QueryContainer;
 import org.paddy.stockmarket.util.json.Quote;
 import org.paddy.stockmarket.util.json.Results;
 /**
@@ -43,6 +38,27 @@ import org.paddy.stockmarket.util.json.Results;
  */
 public class MainJFrame extends javax.swing.JFrame
 {
+    public static final long serialVersionUID = 12345667890L;
+    private static StockManagerDialog stockManagerDialog;
+    private static final String QUERY_YAHOOAPIS_COM = "query.yahooapis.com";
+    private HashSet<String> stocksymbols;
+    /**
+     * The column names for the table with the stock prices and other
+     * information.
+     */
+    private final String[] COLUMN_NAMES = {"Symbol",
+                                           "Name",
+                                           "Price",
+                                           "Change from 50 day moving average",
+                                           "Change from 200 day moving average",
+                                           "Change in %"};
+    private Image image;
+    private Dimension preferredScrollableViewportSize = new Dimension(800, 350);
+    /**
+     * The x and y offset of the desktop displayed by the main frame
+     * @see #MAIN_FRAME_DESKTOP
+     */
+    static final int xOffset = 20, yOffset = 20;
     /**
      * Creates new form MAinJFrame
      */
@@ -179,6 +195,7 @@ public class MainJFrame extends javax.swing.JFrame
      */
     private void readPrices(String symbols)
     {
+        Query query = null;
         Date date = new Date();
         boolean yahooFinanceQuotesBlocked = false;
         JInternalFrame jInternalFrame=new JInternalFrame("Prices on: "+date.toString(),
@@ -191,7 +208,7 @@ public class MainJFrame extends javax.swing.JFrame
         try
         {
             String requestURI = "http://query.yahooapis.com/v1/public/yql?q=";
-            String YQLquery = URLEncoder.encode("select * " +
+            String YQLqueryString = URLEncoder.encode("select * " +
                                                     "from yahoo.finance.quotes " +
                                                     "where symbol in (" + 
                                                     symbols +
@@ -199,127 +216,99 @@ public class MainJFrame extends javax.swing.JFrame
             String GETparam = "&format=json" +
                                 "&diagnostics=true" +
                                 "&env=" + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
-            String request = requestURI + YQLquery + GETparam;
-            try
-            {
-                URL url = new URL(request);
-                try
-                {
-                    InputStreamReader isr;
-                    BufferedReader br;
-                    isr = new InputStreamReader(url.openStream());
-                    br = new BufferedReader(isr);
-                    String inputLine;
-                    String returnString;
-                    returnString = "";
-                    while ((inputLine = br.readLine()) != null)
-                    {
-                            returnString += inputLine;
-                    }
-                    br.close();
-                    QueryContainer queryContainer = new Gson().fromJson(returnString, QueryContainer.class);
-                    Query query = queryContainer.getQuery();
-                    //System.out.println(query.getCount());
-                    Results results = query.getResults();
-                    if(results == null)
-                    {
-                        yahooFinanceQuotesBlocked = true;
-                        Diagnostics diagnostics = query.getDiagnostics();
-                        Javascript javascript = diagnostics.getJavascript();
-                        String content = javascript.getContent();
-                        JOptionPane.showMessageDialog(this,
-                            content,
-                            "YAHOO Errog",
-                            JOptionPane.ERROR_MESSAGE);
-                    }
-                    else
-                    {        
-                        List<Quote> quotes = results.getQuote();
-                        Iterator<Quote> iterator = quotes.iterator();
-                        int i=0;
-                        while (iterator.hasNext())
-                        {
-                            Quote quote = iterator.next();
-                            String symbol = quote.getSymbol();
-                            rowData[i][0] = symbol;
-                            String name = quote.getName();
-                            rowData[i][1] = name;
-                            String bidRealtime = quote.getBidRealtime();
-                            rowData[i][2] = bidRealtime;
-                            String lastTradePriceOnly = quote.getLastTradePriceOnly();
-                            String bidString = quote.getBid();
-                            String changeFromFiftydayMovingAverage = quote.getChangeFromFiftydayMovingAverage();
-                            rowData[i][3] = changeFromFiftydayMovingAverage;
-                            String changeFromTwoHundreddayMovingAverage = quote.getChangeFromTwoHundreddayMovingAverage();
-                            rowData[i][4] = changeFromTwoHundreddayMovingAverage;
-                            String changeInPercent = quote.getChangeinPercent();
-                            rowData[i][5] = changeInPercent;
-                            float bid;
-                            if(bidRealtime != null)
-                            {
-                                try
-                                {
-                                    bid = Float.parseFloat(bidRealtime);
-                                    /*
-                                    System.out.println(name + ": " + bid +
-                                            " ChangeFromFiftydayMovingAverage:"+changeFromFiftydayMovingAverage +
-                                            " ChangeFromTwoHundreddayMovingAverage :" + changeFromTwoHundreddayMovingAverage +
-                                            " ChangeinPercent:" + changeInPercent);
-                                    */
-                                }
-                                catch(NumberFormatException nfe)
-                                {
-                                    System.err.println(nfe);
-                                }
-                            }
-                            else if(lastTradePriceOnly != null)
-                            {
-                                try
-                                {
-                                    float lastPrice = Float.parseFloat(lastTradePriceOnly);
-                                    rowData[i][2] = lastTradePriceOnly;
-                                    //System.out.println(name + ": " + lastPrice);
-                                }
-                                catch(NumberFormatException nfe)
-                                {
-                                    System.err.println(nfe);
-                                }
-                            }
-                            else if(bidString != null)
-                            {
-                                try
-                                {
-                                    bid = Float.parseFloat(bidString);
-                                    rowData[i][2] = bidString;
-                                    //System.out.println(name + ": " + bid);
-                                }
-                                catch(NumberFormatException nfe)
-                                {
-                                    System.err.println(nfe);
-                                }
-                            }
-                            else
-                            {
-                                    System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
-                            }
-                            i++;
-                        }
-                    }
-                }
-                catch(IOException ioe)
-                {
-                        System.err.println(ioe);
-                }
-            }
-            catch(MalformedURLException mue)
-            {
-                    System.err.println(mue);
-            }
+            String request = requestURI + YQLqueryString + GETparam;
+            query = YQLquery.yqlQueryResult(request);
         }
         catch(UnsupportedEncodingException uee)
         {
                 System.err.println(uee);
         }
+        Results results = query.getResults();
+        if(results == null)
+        {
+            yahooFinanceQuotesBlocked = true;
+            Diagnostics diagnostics = query.getDiagnostics();
+            Javascript javascript = diagnostics.getJavascript();
+            String content = javascript.getContent();
+            JOptionPane.showMessageDialog(this,
+                content,
+                "YAHOO Errog",
+                JOptionPane.ERROR_MESSAGE);
+        }
+        else
+        {        
+            List<Quote> quotes = results.getQuote();
+            Iterator<Quote> iterator = quotes.iterator();
+            int i=0;
+            while (iterator.hasNext())
+            {
+                Quote quote = iterator.next();
+                String symbol = quote.getSymbol();
+                rowData[i][0] = symbol;
+                String name = quote.getName();
+                rowData[i][1] = name;
+                String bidRealtime = quote.getBidRealtime();
+                rowData[i][2] = bidRealtime;
+                String lastTradePriceOnly = quote.getLastTradePriceOnly();
+                String bidString = quote.getBid();
+                String changeFromFiftydayMovingAverage = quote.getChangeFromFiftydayMovingAverage();
+                rowData[i][3] = changeFromFiftydayMovingAverage;
+                String changeFromTwoHundreddayMovingAverage = quote.getChangeFromTwoHundreddayMovingAverage();
+                rowData[i][4] = changeFromTwoHundreddayMovingAverage;
+                String changeInPercent = quote.getChangeinPercent();
+                rowData[i][5] = changeInPercent;
+                float bid;
+                if(bidRealtime != null)
+                {
+                    try
+                    {
+                        bid = Float.parseFloat(bidRealtime);
+                        /*
+                        System.out.println(name + ": " + bid +
+                                " ChangeFromFiftydayMovingAverage:"+changeFromFiftydayMovingAverage +
+                                " ChangeFromTwoHundreddayMovingAverage :" + changeFromTwoHundreddayMovingAverage +
+                                " ChangeinPercent:" + changeInPercent);
+                        */
+                    }
+                    catch(NumberFormatException nfe)
+                    {
+                        System.err.println(nfe);
+                    }
+                }
+                else if(lastTradePriceOnly != null)
+                {
+                    try
+                    {
+                        float lastPrice = Float.parseFloat(lastTradePriceOnly);
+                        rowData[i][2] = lastTradePriceOnly;
+                        //System.out.println(name + ": " + lastPrice);
+                    }
+                    catch(NumberFormatException nfe)
+                    {
+                        System.err.println(nfe);
+                    }
+                }
+                else if(bidString != null)
+                {
+                    try
+                    {
+                        bid = Float.parseFloat(bidString);
+                        rowData[i][2] = bidString;
+                        //System.out.println(name + ": " + bid);
+                    }
+                    catch(NumberFormatException nfe)
+                    {
+                        System.err.println(nfe);
+                    }
+                }
+                else
+                {
+                        System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
+                }
+                i++;
+            }
+        }
+
         if(yahooFinanceQuotesBlocked)
         {
             jInternalFrame.dispose();
@@ -508,7 +497,7 @@ public class MainJFrame extends javax.swing.JFrame
         shrink = 50;
         if(stockManagerDialog == null)
         {
-            stockManagerDialog = new stockManagerDialog(this, true);
+            stockManagerDialog = new StockManagerDialog(this, true);
         }
         stockManagerDialog.setSymbols(stocksymbols);
         /* Calculate location and dimansion of the frame */
@@ -539,25 +528,4 @@ public class MainJFrame extends javax.swing.JFrame
     private javax.swing.JMenuItem jMenuItemOpen;
     private javax.swing.JMenuItem jMenuItemSave;
     // End of variables declaration//GEN-END:variables
-    public static final long serialVersionUID = 12345667890L;
-    private static stockManagerDialog stockManagerDialog;
-    private static final String QUERY_YAHOOAPIS_COM = "query.yahooapis.com";
-    private HashSet<String> stocksymbols;
-    /**
-     * The column names for the table with the stock prices and other
-     * information.
-     */
-    private final String[] COLUMN_NAMES = {"Symbol",
-                                           "Name",
-                                           "Price",
-                                           "Change from 50 day moving average",
-                                           "Change from 200 day moving average",
-                                           "Change in %"};
-    private Image image;
-    private Dimension preferredScrollableViewportSize = new Dimension(800, 350);
-    /**
-     * The x and y offset of the desktop displayed by the main frame
-     * @see #MAIN_FRAME_DESKTOP
-     */
-    static final int xOffset = 20, yOffset = 20;
 }
