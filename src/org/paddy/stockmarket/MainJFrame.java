@@ -205,13 +205,14 @@ public class MainJFrame extends javax.swing.JFrame
         JTable table = new JTable(rowData, COLUMN_NAMES);
         try
         {
-            String YQLqueryString = URLEncoder.encode("select * " +
+            String YQLqueryString, GETparam, request;
+            YQLqueryString = URLEncoder.encode("select * " +
                                                     "from yahoo.finance.quotes " +
                                                     "where symbol in (" + 
                                                     symbols +
                                                     ") | sort(field=\"Name\", descending=\"false\")", "UTF-8");
-            String GETparam = YQLquery.GETparam + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
-            String request = YQLquery.requestURI + YQLqueryString + GETparam;
+            GETparam = YQLquery.GETparam + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
+            request = YQLquery.requestURI + YQLqueryString + GETparam;
             query = YQLquery.yqlQueryResult(request);
         }
         catch(UnsupportedEncodingException uee)
@@ -229,7 +230,7 @@ public class MainJFrame extends javax.swing.JFrame
                 JOptionPane.ERROR_MESSAGE);
         }
         else
-        {        
+        {   
             List<Quote> quotes = results.getQuote();
             Iterator<Quote> iterator = quotes.iterator();
             int i=0;
