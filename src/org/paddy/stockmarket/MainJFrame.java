@@ -27,8 +27,6 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.TableColumn;
 import org.paddy.stockmarket.util.image.WindowIcons;
-import org.paddy.stockmarket.util.json.Diagnostics;
-import org.paddy.stockmarket.util.json.Javascript;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.Quote;
 import org.paddy.stockmarket.util.json.Results;
@@ -207,16 +205,13 @@ public class MainJFrame extends javax.swing.JFrame
         JTable table = new JTable(rowData, COLUMN_NAMES);
         try
         {
-            String requestURI = "http://query.yahooapis.com/v1/public/yql?q=";
             String YQLqueryString = URLEncoder.encode("select * " +
                                                     "from yahoo.finance.quotes " +
                                                     "where symbol in (" + 
                                                     symbols +
                                                     ") | sort(field=\"Name\", descending=\"false\")", "UTF-8");
-            String GETparam = "&format=json" +
-                                "&diagnostics=true" +
-                                "&env=" + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
-            String request = requestURI + YQLqueryString + GETparam;
+            String GETparam = YQLquery.GETparam + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
+            String request = YQLquery.requestURI + YQLqueryString + GETparam;
             query = YQLquery.yqlQueryResult(request);
         }
         catch(UnsupportedEncodingException uee)
@@ -227,11 +222,9 @@ public class MainJFrame extends javax.swing.JFrame
         if(results == null)
         {
             yahooFinanceQuotesBlocked = true;
-            Diagnostics diagnostics = query.getDiagnostics();
-            Javascript javascript = diagnostics.getJavascript();
-            String content = javascript.getContent();
+            String diagnostics = YQLquery.getDiagnostics(query);
             JOptionPane.showMessageDialog(this,
-                content,
+                diagnostics,
                 "YAHOO Errog",
                 JOptionPane.ERROR_MESSAGE);
         }
