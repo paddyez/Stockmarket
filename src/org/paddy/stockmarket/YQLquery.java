@@ -30,6 +30,7 @@ public class YQLquery
         Query query = null;
         try
         {
+            System.out.println(request);
             URL url = new URL(request);
             try
             {

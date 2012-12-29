@@ -80,19 +80,53 @@ public class StockManagerDialog extends javax.swing.JDialog
             }
             else
             {
-                List<Quote> quotes = results.getQuote();
-                Iterator<Quote> iterator = quotes.iterator();
-                int i=0;
-                while (iterator.hasNext())
+                String symbol, name, bidRealtime, lastTradePriceOnly, bidString;
+                Quote quote = results.getQuote();
+                symbol = quote.getSymbol();
+                name = quote.getName();
+                bidRealtime = quote.getBidRealtime();
+                lastTradePriceOnly = quote.getLastTradePriceOnly();
+                bidString = quote.getBid();
+                float bid;
+                bid = (float) 0;
+                if(bidRealtime != null)
                 {
-                    String symbol, name, bidRealtime;
-                    Quote quote = iterator.next();
-                    symbol = quote.getSymbol();
-                    name = quote.getName();
-                    bidRealtime = quote.getBidRealtime();
-                    System.out.println(i + " " + name + " " + symbol);
-                    i++;
+                    try
+                    {
+                        bid = Float.parseFloat(bidRealtime);
+                    }
+                    catch(NumberFormatException nfe)
+                    {
+                        System.err.println(nfe);
+                    }
                 }
+                else if(lastTradePriceOnly != null)
+                {
+                    try
+                    {
+                        bid = Float.parseFloat(lastTradePriceOnly);
+                    }
+                    catch(NumberFormatException nfe)
+                    {
+                        System.err.println(nfe);
+                    }
+                }
+                else if(bidString != null)
+                {
+                    try
+                    {
+                        bid = Float.parseFloat(bidString);
+                    }
+                    catch(NumberFormatException nfe)
+                    {
+                        System.err.println(nfe);
+                    }
+                }
+                else
+                {
+                        System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
+                }
+                System.out.println(name + " " + symbol + " " + bid);
             }  
         }
     }

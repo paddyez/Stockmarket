@@ -231,7 +231,7 @@ public class MainJFrame extends javax.swing.JFrame
         }
         else
         {   
-            List<Quote> quotes = results.getQuote();
+            List<Quote> quotes = results.getQuotes();
             Iterator<Quote> iterator = quotes.iterator();
             int i=0;
             while (iterator.hasNext())
@@ -265,12 +265,6 @@ public class MainJFrame extends javax.swing.JFrame
                     try
                     {
                         bid = Float.parseFloat(bidRealtime);
-                        /*
-                        System.out.println(name + ": " + bid +
-                                " ChangeFromFiftydayMovingAverage:"+changeFromFiftydayMovingAverage +
-                                " ChangeFromTwoHundreddayMovingAverage :" + changeFromTwoHundreddayMovingAverage +
-                                " ChangeinPercent:" + changeInPercent);
-                        */
                     }
                     catch(NumberFormatException nfe)
                     {
@@ -283,7 +277,6 @@ public class MainJFrame extends javax.swing.JFrame
                     {
                         float lastPrice = Float.parseFloat(lastTradePriceOnly);
                         rowData[i][2] = lastTradePriceOnly;
-                        //System.out.println(name + ": " + lastPrice);
                     }
                     catch(NumberFormatException nfe)
                     {
@@ -296,7 +289,6 @@ public class MainJFrame extends javax.swing.JFrame
                     {
                         bid = Float.parseFloat(bidString);
                         rowData[i][2] = bidString;
-                        //System.out.println(name + ": " + bid);
                     }
                     catch(NumberFormatException nfe)
                     {
