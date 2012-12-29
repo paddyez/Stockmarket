@@ -85,10 +85,11 @@ public class StockManagerDialog extends javax.swing.JDialog
                 int i=0;
                 while (iterator.hasNext())
                 {
-                    String symbol, name;
+                    String symbol, name, bidRealtime;
                     Quote quote = iterator.next();
                     symbol = quote.getSymbol();
                     name = quote.getName();
+                    bidRealtime = quote.getBidRealtime();
                     System.out.println(i + " " + name + " " + symbol);
                     i++;
                 }

@@ -236,20 +236,28 @@ public class MainJFrame extends javax.swing.JFrame
             int i=0;
             while (iterator.hasNext())
             {
+                String symbol, 
+                        name, 
+                        bidRealtime, 
+                        lastTradePriceOnly,
+                        bidString,
+                        changeFromFiftydayMovingAverage,
+                        changeFromTwoHundreddayMovingAverage,
+                        changeInPercent;
                 Quote quote = iterator.next();
-                String symbol = quote.getSymbol();
+                symbol = quote.getSymbol();
                 rowData[i][0] = symbol;
-                String name = quote.getName();
+                name = quote.getName();
                 rowData[i][1] = name;
-                String bidRealtime = quote.getBidRealtime();
+                bidRealtime = quote.getBidRealtime();
                 rowData[i][2] = bidRealtime;
-                String lastTradePriceOnly = quote.getLastTradePriceOnly();
-                String bidString = quote.getBid();
-                String changeFromFiftydayMovingAverage = quote.getChangeFromFiftydayMovingAverage();
+                lastTradePriceOnly = quote.getLastTradePriceOnly();
+                bidString = quote.getBid();
+                changeFromFiftydayMovingAverage = quote.getChangeFromFiftydayMovingAverage();
                 rowData[i][3] = changeFromFiftydayMovingAverage;
-                String changeFromTwoHundreddayMovingAverage = quote.getChangeFromTwoHundreddayMovingAverage();
+                changeFromTwoHundreddayMovingAverage = quote.getChangeFromTwoHundreddayMovingAverage();
                 rowData[i][4] = changeFromTwoHundreddayMovingAverage;
-                String changeInPercent = quote.getChangeinPercent();
+                changeInPercent = quote.getChangeinPercent();
                 rowData[i][5] = changeInPercent;
                 float bid;
                 if(bidRealtime != null)
