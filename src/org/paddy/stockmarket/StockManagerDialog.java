@@ -41,17 +41,15 @@ public class StockManagerDialog extends javax.swing.JDialog
     private void searchStock()
     {
         String searchString = addStockSearchTextField.getText();
-        if(searchString.equals("Enter a search string") || searchString.equals(""))
+        if(searchString.equals("Enter a yahoo stock symbol") || searchString.equals(""))
         {
-            addStockSearchButton.setToolTipText("You should enter a search sting first");
-            System.out.println("You should enter a search sting first");
+            addStockSearchButton.setToolTipText("You should enter a yahoo stock symbol first");
         }
         else
         {
             boolean yahooFinanceQuotesBlocked = false;
             Query query = null;
             addStockSearchButton.setToolTipText("Last search was: " + searchString);
-            System.out.println("Searching for: " + searchString);
             try
             {
                 String YQLqueryString, GETparam, request;
@@ -174,11 +172,11 @@ public class StockManagerDialog extends javax.swing.JDialog
         addStockPanel.setForeground(new java.awt.Color(255, 255, 255));
         addStockPanel.setName("addStockPanel"); // NOI18N
 
-        addStockSearchLabel.setText("Search for stocks:");
+        addStockSearchLabel.setText("Stock Symbol:");
         addStockSearchLabel.setPreferredSize(new java.awt.Dimension(100, 15));
 
-        addStockSearchTextField.setText("Enter a search string");
-        addStockSearchTextField.setToolTipText("Enter a search string");
+        addStockSearchTextField.setText("Enter a yahoo stock symbol");
+        addStockSearchTextField.setToolTipText("Enter a yahoo stock symbol");
         addStockSearchTextField.setPreferredSize(new java.awt.Dimension(500, 25));
         addStockSearchTextField.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
@@ -196,7 +194,7 @@ public class StockManagerDialog extends javax.swing.JDialog
             }
         });
 
-        addStockSearchButton.setText("Search");
+        addStockSearchButton.setText("Lookup");
         addStockSearchButton.setMargin(new java.awt.Insets(2, 2, 2, 2));
         addStockSearchButton.setPreferredSize(new java.awt.Dimension(75, 25));
         addStockSearchButton.addActionListener(new java.awt.event.ActionListener() {
@@ -253,14 +251,14 @@ public class StockManagerDialog extends javax.swing.JDialog
     }//GEN-LAST:event_addStockSearchTextFieldActionPerformed
 
     private void textFieldMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textFieldMouseEntered
-        if(addStockSearchTextField.getText().equals("Enter a search string"))
+        if(addStockSearchTextField.getText().equals("Enter a yahoo stock symbol"))
         {
             addStockSearchTextField.setText(null);
         }
     }//GEN-LAST:event_textFieldMouseEntered
 
     private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-        if(evt.getActionCommand().equals("Search"))
+        if(evt.getActionCommand().equals("Lookup"))
         {
             searchStock();
         }
