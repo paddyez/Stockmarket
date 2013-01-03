@@ -1,11 +1,11 @@
 package org.paddy.stockmarket;
 
 import java.awt.event.KeyEvent;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.HashSet;
-import java.util.Iterator;
-import java.util.List;
 import javax.swing.JOptionPane;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.Quote;
@@ -38,9 +38,9 @@ public class StockManagerDialog extends javax.swing.JDialog
     /**
      * 
      */
-    private void searchStock()
+    private void lookupStock()
     {
-        String searchString = addStockSearchTextField.getText();
+        String searchString = addStockLookupTextField.getText();
         if(searchString.equals("Enter a yahoo stock symbol") || searchString.equals(""))
         {
             addStockSearchButton.setToolTipText("You should enter a yahoo stock symbol first");
@@ -128,6 +128,34 @@ public class StockManagerDialog extends javax.swing.JDialog
             }  
         }
     }
+    private void openBrowser()
+    {
+        if(java.awt.Desktop.isDesktopSupported())
+        {
+            java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
+            if(desktop.isSupported(java.awt.Desktop.Action.BROWSE))
+            {
+                try
+                {
+                    java.net.URI uri;
+                    uri = new java.net.URI("http://de.finance.yahoo.com/lookup?s=" + addStockSearchTextField.getText());
+                    desktop.browse( uri );
+                }
+                catch ( URISyntaxException | IOException e )
+                {
+                    System.err.println( e.getMessage() );
+                }
+            }
+            else
+            {
+                System.err.println( "Desktop doesn't support the browse action (fatal)" );
+            }
+        }
+        else
+        {
+            System.err.println( "Desktop is not supported (fatal)" );
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -142,23 +170,29 @@ public class StockManagerDialog extends javax.swing.JDialog
         currentStocksPanel = new javax.swing.JPanel();
         addStockPanel = new javax.swing.JPanel();
         addStockSearchLabel = new javax.swing.JLabel();
-        addStockSearchTextField = new javax.swing.JTextField();
+        addStockLookupTextField = new javax.swing.JTextField();
         addStockSearchButton = new javax.swing.JButton();
+        searchLabel = new javax.swing.JLabel();
+        addStockSearchTextField = new javax.swing.JTextField();
+        jButton1 = new javax.swing.JButton();
 
+        stockManagerTabbedPane.setPreferredSize(new java.awt.Dimension(505, 330));
         stockManagerTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
             public void stateChanged(javax.swing.event.ChangeEvent evt) {
                 stockManagerTabbedPaneStateChanged(evt);
             }
         });
 
-        currentStocksPanel.setPreferredSize(new java.awt.Dimension(600, 300));
+        currentStocksScrollPane.setPreferredSize(new java.awt.Dimension(500, 300));
+
+        currentStocksPanel.setPreferredSize(new java.awt.Dimension(500, 300));
         currentStocksPanel.setRequestFocusEnabled(false);
 
         javax.swing.GroupLayout currentStocksPanelLayout = new javax.swing.GroupLayout(currentStocksPanel);
         currentStocksPanel.setLayout(currentStocksPanelLayout);
         currentStocksPanelLayout.setHorizontalGroup(
             currentStocksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 600, Short.MAX_VALUE)
+            .addGap(0, 500, Short.MAX_VALUE)
         );
         currentStocksPanelLayout.setVerticalGroup(
             currentStocksPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -171,26 +205,27 @@ public class StockManagerDialog extends javax.swing.JDialog
 
         addStockPanel.setForeground(new java.awt.Color(255, 255, 255));
         addStockPanel.setName("addStockPanel"); // NOI18N
+        addStockPanel.setPreferredSize(new java.awt.Dimension(600, 75));
 
         addStockSearchLabel.setText("Stock Symbol:");
         addStockSearchLabel.setPreferredSize(new java.awt.Dimension(100, 15));
 
-        addStockSearchTextField.setText("Enter a yahoo stock symbol");
-        addStockSearchTextField.setToolTipText("Enter a yahoo stock symbol");
-        addStockSearchTextField.setPreferredSize(new java.awt.Dimension(500, 25));
-        addStockSearchTextField.addMouseListener(new java.awt.event.MouseAdapter() {
+        addStockLookupTextField.setText("Enter a yahoo stock symbol");
+        addStockLookupTextField.setToolTipText("Enter a yahoo stock symbol");
+        addStockLookupTextField.setPreferredSize(new java.awt.Dimension(500, 25));
+        addStockLookupTextField.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseEntered(java.awt.event.MouseEvent evt) {
-                textFieldMouseEntered(evt);
+                lookupTextFieldMouseEntered(evt);
             }
         });
-        addStockSearchTextField.addActionListener(new java.awt.event.ActionListener() {
+        addStockLookupTextField.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                addStockSearchTextFieldActionPerformed(evt);
+                addStockLookupTextFieldActionPerformed(evt);
             }
         });
-        addStockSearchTextField.addKeyListener(new java.awt.event.KeyAdapter() {
+        addStockLookupTextField.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
-                textFieldKeyPressed(evt);
+                lookupTextFieldKeyPressed(evt);
             }
         });
 
@@ -199,7 +234,28 @@ public class StockManagerDialog extends javax.swing.JDialog
         addStockSearchButton.setPreferredSize(new java.awt.Dimension(75, 25));
         addStockSearchButton.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
-                searchButtonActionPerformed(evt);
+                buttonActionPerformed(evt);
+            }
+        });
+
+        searchLabel.setText("Search Symbol:");
+        searchLabel.setPreferredSize(new java.awt.Dimension(100, 15));
+
+        addStockSearchTextField.setText("Search a stock by name online");
+        addStockSearchTextField.setToolTipText("Search a stock by name online");
+        addStockSearchTextField.setPreferredSize(new java.awt.Dimension(500, 25));
+        addStockSearchTextField.setScrollOffset(0);
+        addStockSearchTextField.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseEntered(java.awt.event.MouseEvent evt) {
+                searchTextFieldMouseEntered(evt);
+            }
+        });
+
+        jButton1.setText("Search");
+        jButton1.setPreferredSize(new java.awt.Dimension(75, 25));
+        jButton1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonActionPerformed(evt);
             }
         });
 
@@ -209,12 +265,18 @@ public class StockManagerDialog extends javax.swing.JDialog
             addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(addStockPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addComponent(addStockSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(addStockSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(searchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(addStockSearchTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 390, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addComponent(addStockSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(addStockLookupTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
+                    .addComponent(addStockSearchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
+                .addGap(10, 10, 10)
+                .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(addStockSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(20, Short.MAX_VALUE))
         );
         addStockPanelLayout.setVerticalGroup(
             addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -222,8 +284,13 @@ public class StockManagerDialog extends javax.swing.JDialog
                 .addContainerGap()
                 .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(addStockSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addStockSearchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addStockLookupTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addStockSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(searchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addStockSearchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(jButton1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap())
         );
 
@@ -233,36 +300,38 @@ public class StockManagerDialog extends javax.swing.JDialog
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(stockManagerTabbedPane)
-                .addContainerGap())
+            .addComponent(stockManagerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(stockManagerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, 300, Short.MAX_VALUE)
+            .addComponent(stockManagerTabbedPane, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
 
         pack();
     }// </editor-fold>//GEN-END:initComponents
 
-    private void addStockSearchTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStockSearchTextFieldActionPerformed
+    private void addStockLookupTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_addStockLookupTextFieldActionPerformed
         // TODO add your handling code here:
-    }//GEN-LAST:event_addStockSearchTextFieldActionPerformed
+    }//GEN-LAST:event_addStockLookupTextFieldActionPerformed
 
-    private void textFieldMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_textFieldMouseEntered
-        if(addStockSearchTextField.getText().equals("Enter a yahoo stock symbol"))
+    private void lookupTextFieldMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_lookupTextFieldMouseEntered
+        if(addStockLookupTextField.getText().equals("Enter a yahoo stock symbol"))
         {
-            addStockSearchTextField.setText(null);
+            addStockLookupTextField.setText(null);
         }
-    }//GEN-LAST:event_textFieldMouseEntered
+    }//GEN-LAST:event_lookupTextFieldMouseEntered
 
-    private void searchButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_searchButtonActionPerformed
-        if(evt.getActionCommand().equals("Lookup"))
+    private void buttonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_buttonActionPerformed
+        switch (evt.getActionCommand())
         {
-            searchStock();
+            case "Lookup":
+                lookupStock();
+                break;
+            case "Search":
+                openBrowser();
+                break;
         }
-    }//GEN-LAST:event_searchButtonActionPerformed
+    }//GEN-LAST:event_buttonActionPerformed
 
     private void stockManagerTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_stockManagerTabbedPaneStateChanged
         int index = stockManagerTabbedPane.getSelectedIndex();
@@ -273,19 +342,30 @@ public class StockManagerDialog extends javax.swing.JDialog
         }
     }//GEN-LAST:event_stockManagerTabbedPaneStateChanged
 
-    private void textFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_textFieldKeyPressed
+    private void lookupTextFieldKeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_lookupTextFieldKeyPressed
         if(evt.getKeyCode() == KeyEvent.VK_ENTER)
         {
-            searchStock();
+            lookupStock();
         }    
-    }//GEN-LAST:event_textFieldKeyPressed
+    }//GEN-LAST:event_lookupTextFieldKeyPressed
+
+    private void searchTextFieldMouseEntered(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_searchTextFieldMouseEntered
+        if(addStockSearchTextField.getText().equals("Search a stock by name online"))
+        {
+            addStockSearchTextField.setText(null);
+        }
+    }//GEN-LAST:event_searchTextFieldMouseEntered
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JTextField addStockLookupTextField;
     private javax.swing.JPanel addStockPanel;
     private javax.swing.JButton addStockSearchButton;
     private javax.swing.JLabel addStockSearchLabel;
     private javax.swing.JTextField addStockSearchTextField;
     private javax.swing.JPanel currentStocksPanel;
     private javax.swing.JScrollPane currentStocksScrollPane;
+    private javax.swing.JButton jButton1;
+    private javax.swing.JLabel searchLabel;
     private javax.swing.JTabbedPane stockManagerTabbedPane;
     // End of variables declaration//GEN-END:variables
 }
