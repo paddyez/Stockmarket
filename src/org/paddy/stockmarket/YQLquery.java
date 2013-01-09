@@ -1,5 +1,8 @@
 package org.paddy.stockmarket;
 import com.google.gson.Gson;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -46,7 +49,16 @@ public class YQLquery
                         returnString += inputLine;
                 }
                 br.close();
-                QueryContainer queryContainer = new Gson().fromJson(returnString, QueryContainer.class);
+                Gson gson = new Gson();
+                JsonParser parser = new JsonParser();
+                JsonElement jsonElement = parser.parse(returnString);
+                /*
+                JsonObject jsonObject = jsonElement.getAsJsonObject();
+                System.out.println(jsonObject);
+                */
+                QueryContainer queryContainer;
+                queryContainer = gson.fromJson(jsonElement, QueryContainer.class);
+                
                 query = queryContainer.getQuery();
                 //System.out.println(query.getCount());
             }

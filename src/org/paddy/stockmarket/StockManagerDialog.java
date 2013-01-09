@@ -6,6 +6,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
 import java.util.HashSet;
+import java.util.Iterator;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -19,14 +21,19 @@ import org.paddy.stockmarket.util.json.Results;
  */
 public class StockManagerDialog extends javax.swing.JDialog 
 {
+    /**
+     *
+     */
+    protected MainJFrame parent;
     public static final long serialVersionUID = 12345667890L;
     HashSet<String> stocksymbols;
     /**
      * Creates new form StockManagerDialog
      */
-    public StockManagerDialog(java.awt.Frame parent, boolean modal)
+    public StockManagerDialog(MainJFrame parent, boolean modal)
     {
         super(parent, "Manage stocks", modal);
+        this.parent = parent;
         initComponents();
     }
     /**
@@ -55,6 +62,10 @@ public class StockManagerDialog extends javax.swing.JDialog
         {
             addStockLookupButton.setToolTipText("You should enter a yahoo stock symbol first");
         }
+        else if(parent.stocksymbols.contains(lookupString))
+        {
+            System.out.println("Already in your stocks!");
+        }
         else
         {
             boolean yahooFinanceQuotesBlocked = false;
@@ -62,12 +73,13 @@ public class StockManagerDialog extends javax.swing.JDialog
             addStockLookupButton.setToolTipText("Last search was: " + lookupString);
             try
             {
-                String YQLqueryString, GETparam, request;
+                String YQLqueryString, GETparam, request, symbols;
+                symbols = parent.getSymbolQueryString();
                 YQLqueryString = URLEncoder.encode("select * " +
                                                         "from yahoo.finance.quotes " +
-                                                        "where symbol = \"" + 
+                                                        "where symbol in (\"" + 
                                                         lookupString +
-                                                        "\" | sort(field=\"Name\", descending=\"false\")", "UTF-8");
+                                                        "\", " + symbols + ") | sort(field=\"Name\", descending=\"false\")", "UTF-8");
                 GETparam = YQLquery.GETparam + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
                 request = YQLquery.requestURI + YQLqueryString + GETparam;
                 query = YQLquery.yqlQueryResult(request);
@@ -81,6 +93,7 @@ public class StockManagerDialog extends javax.swing.JDialog
             {
                 yahooFinanceQuotesBlocked = true;
                 String diagnostics = YQLquery.getDiagnostics(query);
+                lookupResultLabel.setText("diagnostics");
                 JOptionPane.showMessageDialog(this,
                     diagnostics,
                     "YAHOO Errog",
@@ -89,72 +102,83 @@ public class StockManagerDialog extends javax.swing.JDialog
             else
             {
                 String symbol, name, bidRealtime, lastTradePriceOnly, bidString;
-                Quote quote = results.getQuote();
-                symbol = quote.getSymbol();
-                name = quote.getName();
-                bidRealtime = quote.getBidRealtime();
-                lastTradePriceOnly = quote.getLastTradePriceOnly();
-                bidString = quote.getBid();
-                float bid;
-                bid = (float) 0;
-                if(bidRealtime != null)
+                List<Quote> quotes = results.getQuotes();
+                Iterator<Quote> iterator = quotes.iterator();
+                int i=0;
+                while (iterator.hasNext())
                 {
-                    try
+                    Quote quote = iterator.next();
+                    symbol = quote.getSymbol();
+                    if(symbol.equals(lookupString))
                     {
-                        bid = Float.parseFloat(bidRealtime);
-                    }
-                    catch(NumberFormatException nfe)
-                    {
-                        System.err.println(nfe);
+                        name = quote.getName();
+                        bidRealtime = quote.getBidRealtime();
+                        lastTradePriceOnly = quote.getLastTradePriceOnly();
+                        bidString = quote.getBid();
+                        float bid;
+                        bid = (float) 0;
+                        if(bidRealtime != null)
+                        {
+                            try
+                            {
+                                bid = Float.parseFloat(bidRealtime);
+                            }
+                            catch(NumberFormatException nfe)
+                            {
+                                System.err.println(nfe);
+                            }
+                        }
+                        else if(lastTradePriceOnly != null)
+                        {
+                            try
+                            {
+                                bid = Float.parseFloat(lastTradePriceOnly);
+                            }
+                            catch(NumberFormatException nfe)
+                            {
+                                System.err.println(nfe);
+                            }
+                        }
+                        else if(bidString != null)
+                        {
+                            try
+                            {
+                                bid = Float.parseFloat(bidString);
+                            }
+                            catch(NumberFormatException nfe)
+                            {
+                                System.err.println(nfe);
+                            }
+                        }
+                        else
+                        {
+                                System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
+                        }
+                        lookupResultLabel.setText("<html><p>Stockname: " + name +
+                                "</p><p>Symbol: " + symbol +
+                                "</p><p>Bidprice: " + bid + "</p></html>");
                     }
                 }
-                else if(lastTradePriceOnly != null)
-                {
-                    try
-                    {
-                        bid = Float.parseFloat(lastTradePriceOnly);
-                    }
-                    catch(NumberFormatException nfe)
-                    {
-                        System.err.println(nfe);
-                    }
-                }
-                else if(bidString != null)
-                {
-                    try
-                    {
-                        bid = Float.parseFloat(bidString);
-                    }
-                    catch(NumberFormatException nfe)
-                    {
-                        System.err.println(nfe);
-                    }
-                }
-                else
-                {
-                        System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
-                }
-                System.out.println(name + " " + symbol + " " + bid);
             }  
         }
     }
     private void openBrowser()
     {
         String message, searchString = "";
-        try
-        {
-            searchString = URLEncoder.encode(addStockSearchTextField.getText(), "UTF-8");
-        }
-        catch (UnsupportedEncodingException ueex)
-        {
-            Logger.getLogger(StockManagerDialog.class.getName()).log(Level.SEVERE, null, ueex);
-        }
-        if(searchString.equals("Enter a yahoo stock symbol") || searchString.equals(""))
+        if(searchString.equals("Search a stock by name online") || searchString.equals(""))
         {
             addStockSearchButton.setToolTipText("You should enter a yahoo stock search string first");
         }
         else
         {
+            try
+            {
+                searchString = URLEncoder.encode(addStockSearchTextField.getText(), "UTF-8");
+            }
+            catch (UnsupportedEncodingException ueex)
+            {
+                Logger.getLogger(StockManagerDialog.class.getName()).log(Level.SEVERE, null, ueex);
+            }
             if(java.awt.Desktop.isDesktopSupported())
             {
                 java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
@@ -194,6 +218,25 @@ public class StockManagerDialog extends javax.swing.JDialog
         }
     }
     /**
+     * 
+     */
+    private void addStock()
+    {
+        String lookupString;
+        lookupString = addStockLookupTextField.getText();
+        if(stocksymbols.contains(lookupString))
+        {
+            System.out.println("Already in your stocks!");
+        }
+        else
+        {
+            System.out.println("Adding " + lookupString + " to your Stocks!");
+            stocksymbols.add(lookupString);
+            parent.setSymbols(stocksymbols);
+            lookupResultLabel.setText(null);
+        }
+    }
+    /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
      * regenerated by the Form Editor.
@@ -212,6 +255,8 @@ public class StockManagerDialog extends javax.swing.JDialog
         searchLabel = new javax.swing.JLabel();
         addStockSearchTextField = new javax.swing.JTextField();
         addStockSearchButton = new javax.swing.JButton();
+        lookupResultLabel = new javax.swing.JLabel();
+        addButton = new javax.swing.JButton();
 
         stockManagerTabbedPane.setPreferredSize(new java.awt.Dimension(505, 330));
         stockManagerTabbedPane.addChangeListener(new javax.swing.event.ChangeListener() {
@@ -292,23 +337,37 @@ public class StockManagerDialog extends javax.swing.JDialog
             }
         });
 
+        lookupResultLabel.setPreferredSize(new java.awt.Dimension(100, 15));
+
+        addButton.setText("Add");
+        addButton.setPreferredSize(new java.awt.Dimension(75, 25));
+        addButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                buttonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout addStockPanelLayout = new javax.swing.GroupLayout(addStockPanel);
         addStockPanel.setLayout(addStockPanelLayout);
         addStockPanelLayout.setHorizontalGroup(
             addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(addStockPanelLayout.createSequentialGroup()
                 .addContainerGap()
-                .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(addStockSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(searchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(addStockLookupTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
-                    .addComponent(addStockSearchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))
+                .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
+                    .addComponent(lookupResultLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addGroup(addStockPanelLayout.createSequentialGroup()
+                        .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(addStockSearchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(searchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                        .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                            .addComponent(addStockLookupTextField, javax.swing.GroupLayout.DEFAULT_SIZE, 275, Short.MAX_VALUE)
+                            .addComponent(addStockSearchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, 1, Short.MAX_VALUE))))
                 .addGap(10, 10, 10)
                 .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(addStockLookupButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addComponent(addStockSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(addStockSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(addButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(20, Short.MAX_VALUE))
         );
         addStockPanelLayout.setVerticalGroup(
@@ -324,6 +383,10 @@ public class StockManagerDialog extends javax.swing.JDialog
                     .addComponent(searchLabel, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addStockSearchTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addComponent(addStockSearchButton, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(addStockPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(addButton, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(lookupResultLabel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
                 .addContainerGap())
         );
 
@@ -359,6 +422,11 @@ public class StockManagerDialog extends javax.swing.JDialog
             case "Search":
                 openBrowser();
                 break;
+            case "Add":
+                addStock();
+                break;
+            default:
+                break;
         }
     }//GEN-LAST:event_buttonActionPerformed
 
@@ -386,6 +454,7 @@ public class StockManagerDialog extends javax.swing.JDialog
     }//GEN-LAST:event_searchTextFieldMouseEntered
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton addButton;
     private javax.swing.JButton addStockLookupButton;
     private javax.swing.JTextField addStockLookupTextField;
     private javax.swing.JPanel addStockPanel;
@@ -394,6 +463,7 @@ public class StockManagerDialog extends javax.swing.JDialog
     private javax.swing.JTextField addStockSearchTextField;
     private javax.swing.JPanel currentStocksPanel;
     private javax.swing.JScrollPane currentStocksScrollPane;
+    private javax.swing.JLabel lookupResultLabel;
     private javax.swing.JLabel searchLabel;
     private javax.swing.JTabbedPane stockManagerTabbedPane;
     // End of variables declaration//GEN-END:variables

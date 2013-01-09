@@ -6,21 +6,21 @@ import java.util.List;
  */
 public class Results
 {
-    protected List<Quote> quotes;
-    protected Quote quote;
+    protected List<Quote> quote;
+    //protected Quote quote;
     /**
      *
      * @return List<Quote> quote
      */
     public List<Quote> getQuotes()
     {
-            return quotes;
+            return quote;
     }
     /**
      *
      * @return List<Quote> quote
      */
-    public Quote getQuote()
+    /*public Quote getQuote()
     {
             return quote;
     }
@@ -28,16 +28,16 @@ public class Results
      *
      * @param quotes
      */
-    public void setQuotes(List<Quote> quotes)
+    public void setQuotes(List<Quote> quote)
     {
-            this.quotes = quotes;
+            this.quote = quote;
     }
     /**
      *
      * @param quote
      */
-    public void setQuote(Quote quote)
+    /*public void setQuote(Quote quote)
     {
             this.quote = quote;
-    }
+    }*/
 }

@@ -39,7 +39,7 @@ public class MainJFrame extends javax.swing.JFrame
     public static final long serialVersionUID = 12345667890L;
     private static StockManagerDialog stockManagerDialog;
     private static final String QUERY_YAHOOAPIS_COM = "query.yahooapis.com";
-    private HashSet<String> stocksymbols;
+    protected HashSet<String> stocksymbols;
     /**
      * The column names for the table with the stock prices and other
      * information.
@@ -87,7 +87,7 @@ public class MainJFrame extends javax.swing.JFrame
      * @return HashSet<String> of stock symbols
      */
     @SuppressWarnings("unchecked")
-    private HashSet<String> getSymbols()
+    protected final HashSet<String> getSymbols()
     {
         HashSet<String> stockSymbols = null;
         boolean exists = (new File("Symbols")).exists();
@@ -128,7 +128,7 @@ public class MainJFrame extends javax.swing.JFrame
      * @param stockSymbols
      */
     @SuppressWarnings("unchecked")
-    private void setSymbols(HashSet<String> stockSymbols)
+    public void setSymbols(HashSet<String> stockSymbols)
     {
         HashSet<String> stockSymbolsFile = null;
         boolean exists = (new File("Symbols")).exists();
@@ -324,6 +324,54 @@ public class MainJFrame extends javax.swing.JFrame
         }
     }
     /**
+     * @return boolean isUpAndReachable
+     */
+    protected boolean isUpAndReachable()
+    {
+        boolean isUpAndReachable = false;
+        if(org.paddy.stockmarket.util.net.Network.isAInterfaceUp())
+        {
+            if(org.paddy.stockmarket.util.net.Network.isReachable(QUERY_YAHOOAPIS_COM))
+            {
+                isUpAndReachable = true;
+            }
+            else
+            {
+                JOptionPane.showMessageDialog(this,
+                        "Are you connected to the internet?\nMaybe your DNS-server is down?",
+                        "Warning",
+                        JOptionPane.WARNING_MESSAGE);
+            }
+        }
+        else
+        {
+            JOptionPane.showMessageDialog(this,
+                "There seems no internet interface up other than loopback.\nCheck there is a connection.",
+                "Warning",
+                JOptionPane.WARNING_MESSAGE);
+        }
+        return isUpAndReachable;
+    }
+    /**
+     * 
+     * @return symbols String 
+     */
+    protected String getSymbolQueryString()
+    {
+        Iterator<String> iterator = stocksymbols.iterator();
+        String symbols;
+        symbols = "";
+        while (iterator.hasNext())
+        {
+            symbols += "\"" + iterator.next() + "\"";
+            if(iterator.hasNext())
+            {
+                symbols += ",";
+            }
+        }
+        return symbols;
+    }
+    /**
      * 
      */
     public void setScrollableViewportSize(int width, int height)
@@ -435,37 +483,11 @@ public class MainJFrame extends javax.swing.JFrame
     private void jMenuItemNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNewActionPerformed
         if(stocksymbols != null)
         {
-            if(org.paddy.stockmarket.util.net.Network.isAInterfaceUp())
+            if(isUpAndReachable())
             {
-                if(org.paddy.stockmarket.util.net.Network.isReachable(QUERY_YAHOOAPIS_COM))
-                {
-                    Iterator<String> iterator = stocksymbols.iterator();
-                    String symbols;
-                    symbols = "";
-                    while (iterator.hasNext())
-                    {
-                        symbols += "\"" + iterator.next() + "\"";
-                        if(iterator.hasNext())
-                        {
-                            symbols += ",";
-                        }
-                    }
-                    readPrices(symbols);
-                }
-                else
-                {
-                    JOptionPane.showMessageDialog(this,
-                        "Are you connected to the internet?\nMaybe your DNS-server is down?",
-                        "Warning",
-                        JOptionPane.WARNING_MESSAGE);
-                }
-            }
-           else
-            {
-                JOptionPane.showMessageDialog(this,
-                    "There seems no internet interface up other than loopback.\nCheck there is a connection.",
-                    "Warning",
-                    JOptionPane.WARNING_MESSAGE);
+                String symbols;
+                symbols = getSymbolQueryString();
+                readPrices(symbols);
             }
         }
         else
