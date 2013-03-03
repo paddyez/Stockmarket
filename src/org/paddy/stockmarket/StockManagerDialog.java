@@ -77,9 +77,9 @@ public class StockManagerDialog extends javax.swing.JDialog
                 symbols = parent.getSymbolQueryString();
                 YQLqueryString = URLEncoder.encode("select * " +
                                                         "from yahoo.finance.quotes " +
-                                                        "where symbol in (\"" + 
-                                                        lookupString +
-                                                        "\", " + symbols + ") | sort(field=\"Name\", descending=\"false\")", "UTF-8");
+                                                        "where symbol in (" + 
+                                                        symbols + ",\"" + lookupString + "\"" +
+                                                        ") | sort(field=\"Name\", descending=\"false\")", "UTF-8");
                 GETparam = YQLquery.GETparam + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
                 request = YQLquery.requestURI + YQLqueryString + GETparam;
                 query = YQLquery.yqlQueryResult(request);
@@ -162,6 +162,9 @@ public class StockManagerDialog extends javax.swing.JDialog
             }  
         }
     }
+    /**
+     * 
+     */
     private void openBrowser()
     {
         String message, searchString = "";
