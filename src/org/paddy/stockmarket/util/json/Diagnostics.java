@@ -6,12 +6,12 @@ package org.paddy.stockmarket.util.json;
  */
 public class Diagnostics
 {
-    protected Javascript javascript;
+    protected Object javascript;
     /**
      *
      * @return Javascript javascript
      */
-    public Javascript getJavascript()
+    public Object getJavascript()
     {
             return javascript;
     }
