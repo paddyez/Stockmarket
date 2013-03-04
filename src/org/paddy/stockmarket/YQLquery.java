@@ -81,8 +81,7 @@ public class YQLquery
     protected static String getDiagnostics(Query query)
     {
         Diagnostics diagnostics = query.getDiagnostics();
-        Javascript javascript = (Javascript) diagnostics.getJavascript();
-        String content = javascript.getContent();
+        String content = diagnostics.getJavascript().toString();
         return content;
     }
 }
