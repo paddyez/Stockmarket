@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
+import javax.swing.JLabel;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.Quote;
 import org.paddy.stockmarket.util.json.Results;
@@ -35,6 +36,8 @@ public class StockManagerDialog extends javax.swing.JDialog
         super(parent, "Manage stocks", modal);
         this.parent = parent;
         initComponents();
+        this.stocksymbols = parent.stocksymbols;
+        initStockComponents();
     }
     /**
      * 
@@ -49,7 +52,7 @@ public class StockManagerDialog extends javax.swing.JDialog
      */
     private void lookupStock()
     {
-        String lookupString, searchString, ownerName;
+        String lookupString, searchString, ownerName, message;
         lookupString = addStockLookupTextField.getText();
         searchString = addStockSearchTextField.getText();
         ownerName = this.getFocusOwner().getName();
@@ -64,7 +67,12 @@ public class StockManagerDialog extends javax.swing.JDialog
         }
         else if(parent.stocksymbols.contains(lookupString))
         {
-            System.out.println("Already in your stocks!");
+           message = lookupString + " is already in your stocks!";
+                    JOptionPane.showMessageDialog(this,
+                        message,
+                        "YAHOO Errog",
+                        JOptionPane.ERROR_MESSAGE);
+            System.out.println(lookupString + " is already in your stocks!");
         }
         else
         {
@@ -167,7 +175,8 @@ public class StockManagerDialog extends javax.swing.JDialog
      */
     private void openBrowser()
     {
-        String message, searchString = "";
+        String message, searchString;
+        searchString = addStockSearchTextField.getText();
         if(searchString.equals("Search a stock by name online") || searchString.equals(""))
         {
             addStockSearchButton.setToolTipText("You should enter a yahoo stock search string first");
@@ -181,9 +190,11 @@ public class StockManagerDialog extends javax.swing.JDialog
             catch (UnsupportedEncodingException ueex)
             {
                 Logger.getLogger(StockManagerDialog.class.getName()).log(Level.SEVERE, null, ueex);
+                System.err.println(ueex);
             }
             if(java.awt.Desktop.isDesktopSupported())
             {
+                System.out.println("Desktop is supported!");
                 java.awt.Desktop desktop = java.awt.Desktop.getDesktop();
                 if(desktop.isSupported(java.awt.Desktop.Action.BROWSE))
                 {
@@ -191,6 +202,7 @@ public class StockManagerDialog extends javax.swing.JDialog
                     {
                         java.net.URI uri;
                         uri = new java.net.URI("http://de.finance.yahoo.com/lookup?s=" + searchString);
+                        System.out.println(uri);
                         desktop.browse(uri);
                         addStockSearchButton.setToolTipText("Last search was: " + searchString);
                     }
@@ -238,6 +250,21 @@ public class StockManagerDialog extends javax.swing.JDialog
             parent.setSymbols(stocksymbols);
             lookupResultLabel.setText(null);
         }
+    }
+    /**
+     * 
+     */
+    private void initStockComponents()
+    {
+        JLabel stockLabel;
+        for(String stock : stocksymbols)
+        {
+            System.out.println(stock);
+            stockLabel = new JLabel(stock);
+            currentStocksPanel.add(stockLabel);
+            stockLabel.setPreferredSize(new java.awt.Dimension(100, 15));
+        }
+        
     }
     /**
      * This method is called from within the constructor to initialize the form.
