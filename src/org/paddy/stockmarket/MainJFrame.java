@@ -224,7 +224,6 @@ public class MainJFrame extends javax.swing.JFrame
         {
             yahooFinanceQuotesBlocked = true;
             String diagnostics = YQLquery.getDiagnostics(query);
-            System.err.println(diagnostics);
             JOptionPane.showMessageDialog(this,
                 diagnostics,
                 "YAHOO Errog",
@@ -318,7 +317,7 @@ public class MainJFrame extends javax.swing.JFrame
             table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
             jInternalFrame.getContentPane().add(scrollPane);
             jInternalFrame.setSize(jInternalFrame.getPreferredSize());
-            int openFrameCount=jDesktopPane1.getAllFrames().length;
+            int openFrameCount = jDesktopPane1.getAllFrames().length;
             jInternalFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
             jDesktopPane1.add(jInternalFrame);
             jInternalFrame.setVisible(true);

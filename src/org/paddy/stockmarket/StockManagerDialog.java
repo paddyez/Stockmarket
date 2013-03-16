@@ -94,7 +94,7 @@ public class StockManagerDialog extends javax.swing.JDialog
             }
             catch(UnsupportedEncodingException uee)
             {
-                    System.err.println(uee);
+                System.err.println(uee);
             }
             Results results = query.getResults();
             if(results == null)
@@ -257,12 +257,16 @@ public class StockManagerDialog extends javax.swing.JDialog
     private void initStockComponents()
     {
         JLabel stockLabel;
+        int offset = 10;
         for(String stock : stocksymbols)
         {
             System.out.println(stock);
             stockLabel = new JLabel(stock);
-            currentStocksPanel.add(stockLabel);
             stockLabel.setPreferredSize(new java.awt.Dimension(100, 15));
+            stockLabel.setLocation(10, offset);
+            currentStocksPanel.add(stockLabel);
+            stockLabel.setVisible(true);
+            offset += 10;
         }
         
     }

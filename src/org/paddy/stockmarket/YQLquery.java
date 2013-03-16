@@ -81,6 +81,7 @@ public class YQLquery
     {
         Diagnostics diagnostics = query.getDiagnostics();
         String content = diagnostics.getJavascript().toString();
+        System.err.println(content);
         Gson gson = new Gson();
         JsonParser parser = new JsonParser();
         JsonElement jsonElement = parser.parse(content);
