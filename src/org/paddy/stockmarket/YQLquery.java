@@ -1,7 +1,6 @@
 package org.paddy.stockmarket;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -82,6 +81,12 @@ public class YQLquery
     {
         Diagnostics diagnostics = query.getDiagnostics();
         String content = diagnostics.getJavascript().toString();
+        Gson gson = new Gson();
+        JsonParser parser = new JsonParser();
+        JsonElement jsonElement = parser.parse(content);
+        Javascript javascript;
+        javascript = gson.fromJson(jsonElement, Javascript.class);
+        content = javascript.getContent();
         return content;
     }
 }

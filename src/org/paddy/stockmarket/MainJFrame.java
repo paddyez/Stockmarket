@@ -224,6 +224,7 @@ public class MainJFrame extends javax.swing.JFrame
         {
             yahooFinanceQuotesBlocked = true;
             String diagnostics = YQLquery.getDiagnostics(query);
+            System.err.println(diagnostics);
             JOptionPane.showMessageDialog(this,
                 diagnostics,
                 "YAHOO Errog",
