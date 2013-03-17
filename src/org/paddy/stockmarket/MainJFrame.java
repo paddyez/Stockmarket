@@ -9,9 +9,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -50,13 +52,15 @@ public class MainJFrame extends javax.swing.JFrame
                                            "Change from 50 day moving average",
                                            "Change from 200 day moving average",
                                            "Change in %"};
-    private Image image;
-    private Dimension preferredScrollableViewportSize = new Dimension(800, 350);
+    private static final String outputFile = "current_prices.csv";
+    private static final String currentWorkingDirectory = System.getProperty("user.dir") + "/";
+    private static Image image;
+    private static Dimension preferredScrollableViewportSize = new Dimension(800, 350);
     /**
      * The x and y offset of the desktop displayed by the main frame
      * @see #MAIN_FRAME_DESKTOP
      */
-    static final int xOffset = 20, yOffset = 20;
+    private static final int xOffset = 20, yOffset = 20;
     /**
      * Creates new form MAinJFrame
      */
@@ -230,79 +234,96 @@ public class MainJFrame extends javax.swing.JFrame
                 JOptionPane.ERROR_MESSAGE);
         }
         else
-        {   
-            List<Quote> quotes = results.getQuotes();
-            Iterator<Quote> iterator = quotes.iterator();
-            int i=0;
-            while (iterator.hasNext())
+        {
+            try
             {
-                String symbol, 
-                        name, 
-                        bidRealtime, 
-                        lastTradePriceOnly,
-                        bidString,
-                        changeFromFiftydayMovingAverage,
-                        changeFromTwoHundreddayMovingAverage,
-                        changeInPercent;
-                Quote quote = iterator.next();
-                symbol = quote.getSymbol();
-                rowData[i][0] = symbol;
-                name = quote.getName();
-                rowData[i][1] = name;
-                bidRealtime = quote.getBidRealtime();
-                rowData[i][2] = bidRealtime;
-                lastTradePriceOnly = quote.getLastTradePriceOnly();
-                bidString = quote.getBid();
-                changeFromFiftydayMovingAverage = quote.getChangeFromFiftydayMovingAverage();
-                rowData[i][3] = changeFromFiftydayMovingAverage;
-                changeFromTwoHundreddayMovingAverage = quote.getChangeFromTwoHundreddayMovingAverage();
-                rowData[i][4] = changeFromTwoHundreddayMovingAverage;
-                changeInPercent = quote.getChangeinPercent();
-                rowData[i][5] = changeInPercent;
-                float bid;
-                if(bidRealtime != null)
+                PrintWriter printWriter;
+                printWriter = new PrintWriter(new FileWriter(currentWorkingDirectory + outputFile), true);
+                printWriter.write("Symbol,Name,Price,Change from 50 day moving average,Change from 200 day moving average,Change in %\n");
+                List<Quote> quotes = results.getQuotes();
+                Iterator<Quote> iterator = quotes.iterator();
+                int i=0;
+                while (iterator.hasNext())
                 {
-                    try
+                    String symbol, 
+                            name, 
+                            bidRealtime, 
+                            lastTradePriceOnly,
+                            bidString,
+                            changeFromFiftydayMovingAverage,
+                            changeFromTwoHundredDayMovingAverage,
+                            changeInPercent;
+                    Quote quote = iterator.next();
+                    symbol = quote.getSymbol();
+                    rowData[i][0] = symbol;
+                    name = quote.getName();
+                    rowData[i][1] = name;
+                    bidRealtime = quote.getBidRealtime();
+                    rowData[i][2] = bidRealtime;
+                    lastTradePriceOnly = quote.getLastTradePriceOnly();
+                    bidString = quote.getBid();
+                    changeFromFiftydayMovingAverage = quote.getChangeFromFiftydayMovingAverage();
+                    rowData[i][3] = changeFromFiftydayMovingAverage;
+                    changeFromTwoHundredDayMovingAverage = quote.getChangeFromTwoHundreddayMovingAverage();
+                    rowData[i][4] = changeFromTwoHundredDayMovingAverage;
+                    changeInPercent = quote.getChangeinPercent();
+                    rowData[i][5] = changeInPercent;
+                    float bid;
+                    if(bidRealtime != null)
                     {
-                        bid = Float.parseFloat(bidRealtime);
+                        try
+                        {
+                            bid = Float.parseFloat(bidRealtime);
+                        }
+                        catch(NumberFormatException nfe)
+                        {
+                            System.err.println(nfe);
+                        }
                     }
-                    catch(NumberFormatException nfe)
+                    else if(lastTradePriceOnly != null)
                     {
-                        System.err.println(nfe);
+                        try
+                        {
+                            float lastPrice = Float.parseFloat(lastTradePriceOnly);
+                            rowData[i][2] = lastTradePriceOnly;
+                        }
+                        catch(NumberFormatException nfe)
+                        {
+                            System.err.println(nfe);
+                        }
                     }
+                    else if(bidString != null)
+                    {
+                        try
+                        {
+                            bid = Float.parseFloat(bidString);
+                            rowData[i][2] = bidString;
+                        }
+                        catch(NumberFormatException nfe)
+                        {
+                            System.err.println(nfe);
+                        }
+                    }
+                    else
+                    {
+                            System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
+                    }
+                    printWriter.write(rowData[i][0] + "," +
+                                        rowData[i][1] + "," +
+                                        rowData[i][2] + "," +
+                                        rowData[i][3] + "," +
+                                        rowData[i][4] + "," +
+                                        rowData[i][5] + "\n");
+                    i++;
                 }
-                else if(lastTradePriceOnly != null)
-                {
-                    try
-                    {
-                        float lastPrice = Float.parseFloat(lastTradePriceOnly);
-                        rowData[i][2] = lastTradePriceOnly;
-                    }
-                    catch(NumberFormatException nfe)
-                    {
-                        System.err.println(nfe);
-                    }
-                }
-                else if(bidString != null)
-                {
-                    try
-                    {
-                        bid = Float.parseFloat(bidString);
-                        rowData[i][2] = bidString;
-                    }
-                    catch(NumberFormatException nfe)
-                    {
-                        System.err.println(nfe);
-                    }
-                }
-                else
-                {
-                        System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
-                }
-                i++;
+                printWriter.flush();
+                printWriter.close();
+            }
+            catch(IOException ioe)
+            {
+                System.err.println(ioe);
             }
         }
-
         if(yahooFinanceQuotesBlocked)
         {
             jInternalFrame.dispose();
@@ -376,7 +397,7 @@ public class MainJFrame extends javax.swing.JFrame
      */
     public void setScrollableViewportSize(int width, int height)
     {
-        this.preferredScrollableViewportSize = new Dimension(width, height);
+        MainJFrame.preferredScrollableViewportSize = new Dimension(width, height);
     }
     /**
      * This method is called from within the constructor to initialize the form.
