@@ -239,7 +239,7 @@ public class MainJFrame extends javax.swing.JFrame
             {
                 PrintWriter printWriter;
                 printWriter = new PrintWriter(new FileWriter(currentWorkingDirectory + outputFile), true);
-                printWriter.write("Symbol,Name,Price,Change from 50 day moving average,Change from 200 day moving average,Change in %\n");
+                printWriter.write("Symbol,Name,Price,Change from 50 day moving average,Change from 200 day moving average,Change in %\r\n");
                 List<Quote> quotes = results.getQuotes();
                 Iterator<Quote> iterator = quotes.iterator();
                 int i=0;
@@ -313,7 +313,7 @@ public class MainJFrame extends javax.swing.JFrame
                                         rowData[i][2] + "," +
                                         rowData[i][3] + "," +
                                         rowData[i][4] + "," +
-                                        rowData[i][5] + "\n");
+                                        rowData[i][5] + "\r\n");
                     i++;
                 }
                 printWriter.flush();
