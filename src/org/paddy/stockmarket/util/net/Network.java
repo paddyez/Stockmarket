@@ -16,6 +16,7 @@ import java.util.logging.Logger;
  */
 public class Network
 {
+    private static final String OS = System.getProperty("os.name").toLowerCase();
     /**
      *
      * @return boolean isInterfaceUp
@@ -77,14 +78,12 @@ public class Network
              * Otherwise, you will get "2" as a return value.
              */
             Process process = null;
-            System.out.println(System.getProperty("os.name"));
-            if(isOs("nux") ||
-                    isOs("nix") || 
-                    System.getProperty("os.name").equals("Mac OS X"))
+            if(OS.indexOf("mac") >= 0 ||
+                    OS.indexOf("nux") >= 0)
             {
                 process = java.lang.Runtime.getRuntime().exec("ping -c 1 " + host);
             }
-            else if(isOs("win"))
+            else if(OS.indexOf("win") >= 0)
             {
                 process = java.lang.Runtime.getRuntime().exec("ping -n 1 " + host);
             }
