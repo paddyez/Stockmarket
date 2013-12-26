@@ -1,15 +1,21 @@
 package org.paddy.stockmarket;
 
+import java.awt.Component;
+import java.awt.FlowLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import org.paddy.stockmarket.util.json.Query;
@@ -38,14 +44,6 @@ public class StockManagerDialog extends javax.swing.JDialog
         initComponents();
         this.stocksymbols = parent.stocksymbols;
         initStockComponents();
-    }
-    /**
-     * 
-     * @param stocksymbols HashSet<String>
-     */
-    protected void setSymbols(HashSet<String> stocksymbols)
-    {
-        this.stocksymbols = stocksymbols;
     }
     /**
      * 
@@ -256,19 +254,37 @@ public class StockManagerDialog extends javax.swing.JDialog
      */
     private void initStockComponents()
     {
-        JLabel stockLabel;
-        int offset = 10;
+        JButton stockButton;
         for(String stock : stocksymbols)
         {
-            System.out.println(stock);
-            stockLabel = new JLabel(stock);
-            stockLabel.setPreferredSize(new java.awt.Dimension(100, 15));
-            stockLabel.setLocation(10, offset);
-            currentStocksPanel.add(stockLabel);
-            stockLabel.setVisible(true);
-            offset += 10;
+            stockButton = new JButton(stock);
+            stockButton.setName(stock);
+            stockButton.setPreferredSize(new java.awt.Dimension(100, 25));
+            stockButton.addActionListener(new ActionListener() 
+            {
+                @Override
+                public void actionPerformed(ActionEvent ae)
+                {
+                    String symbol = ae.getActionCommand();
+                    stocksymbols.remove(symbol);
+                    parent.setSymbolHash(stocksymbols);
+                    Component[] comps;
+                    comps = currentStocksPanel.getComponents();
+                    for (Component comp : comps) 
+                    {
+                        if(comp.getName() == null ? symbol == null : comp.getName().equals(symbol))
+                        {
+                            currentStocksPanel.remove(comp);
+                            currentStocksPanel.validate();
+                            currentStocksPanel.repaint(50L);
+                        }
+                    }
+                }
+            });
+            currentStocksPanel.setLayout(new FlowLayout());
+            Component comp = currentStocksPanel.add(stockButton);
+            stockButton.setVisible(true);
         }
-        
     }
     /**
      * This method is called from within the constructor to initialize the form.

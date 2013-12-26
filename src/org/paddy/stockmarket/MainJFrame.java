@@ -1,4 +1,5 @@
 package org.paddy.stockmarket;
+import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Image;
 import java.awt.Point;
@@ -166,7 +167,7 @@ public class MainJFrame extends javax.swing.JFrame
                 System.err.println(e);
             }
         }
-        if(stockSymbolsFile != null && stockSymbols != null)
+        if(stockSymbolsFile != null && stockSymbols == null)
         {
             stockSymbols.addAll(stockSymbolsFile);
         }
@@ -190,6 +191,14 @@ public class MainJFrame extends javax.swing.JFrame
                 System.err.println(ioe);
             }
         }
+    }
+    /**
+     * 
+     * @param stocksymbols
+     */
+    public void setSymbolHash(HashSet<String> stocksymbols)
+    {
+        this.stocksymbols = stocksymbols;
     }
     /**
      *
@@ -340,7 +349,8 @@ public class MainJFrame extends javax.swing.JFrame
             jInternalFrame.setSize(jInternalFrame.getPreferredSize());
             int openFrameCount = jDesktopPane1.getAllFrames().length;
             jInternalFrame.setLocation(xOffset*openFrameCount, yOffset*openFrameCount);
-            jDesktopPane1.add(jInternalFrame);
+            Component ComponentAdded;
+            ComponentAdded = jDesktopPane1.add(jInternalFrame);
             jInternalFrame.setVisible(true);
         }
     }
@@ -524,8 +534,11 @@ public class MainJFrame extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItemOpenActionPerformed
     private void jMenuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSaveActionPerformed
-        String[] symbolsArray = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD=X","EURGBP=X","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
-        stocksymbols = new HashSet<>(Arrays.asList(symbolsArray));
+        if(stocksymbols == null || stocksymbols.isEmpty())
+        {
+            String[] symbolsArray = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD=X","EURGBP=X","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
+            stocksymbols = new HashSet<>(Arrays.asList(symbolsArray));
+        }
         setSymbols(stocksymbols);
     }//GEN-LAST:event_jMenuItemSaveActionPerformed
 
@@ -536,7 +549,6 @@ public class MainJFrame extends javax.swing.JFrame
         {
             stockManagerDialog = new StockManagerDialog(this, true);
         }
-        stockManagerDialog.setSymbols(stocksymbols);
         /* Calculate location and dimansion of the frame */
         lx = (int)getLocationOnScreen().getX()+shrink/2;
         ly = (int)getLocationOnScreen().getY()+shrink/2;
