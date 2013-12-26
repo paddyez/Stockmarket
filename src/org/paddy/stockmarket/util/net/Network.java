@@ -77,7 +77,10 @@ public class Network
              * Otherwise, you will get "2" as a return value.
              */
             Process process = null;
-            if(isOs("nux") || isOs("nix"))
+            System.out.println(System.getProperty("os.name"));
+            if(isOs("nux") ||
+                    isOs("nix") || 
+                    System.getProperty("os.name").equals("Mac OS X"))
             {
                 process = java.lang.Runtime.getRuntime().exec("ping -c 1 " + host);
             }
