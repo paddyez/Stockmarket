@@ -246,6 +246,19 @@ public class StockManagerDialog extends javax.swing.JDialog
             System.out.println("Adding " + lookupString + " to your Stocks!");
             stocksymbols.add(lookupString);
             parent.setSymbols(stocksymbols);
+            JButton stockButton;
+            stockButton = new JButton(lookupString);
+            stockButton.setName(lookupString);
+            stockButton.setPreferredSize(new java.awt.Dimension(100, 25));
+            stockButton.addActionListener(new java.awt.event.ActionListener() {
+                @Override
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    deleteButtonActionPerformed(evt);
+                }
+            });
+            currentStocksPanel.add(stockButton);
+            currentStocksPanel.validate();
+            currentStocksPanel.repaint(50L);
             lookupResultLabel.setText(null);
         }
     }
@@ -260,25 +273,10 @@ public class StockManagerDialog extends javax.swing.JDialog
             stockButton = new JButton(stock);
             stockButton.setName(stock);
             stockButton.setPreferredSize(new java.awt.Dimension(100, 25));
-            stockButton.addActionListener(new ActionListener() 
-            {
+            stockButton.addActionListener(new java.awt.event.ActionListener() {
                 @Override
-                public void actionPerformed(ActionEvent ae)
-                {
-                    String symbol = ae.getActionCommand();
-                    stocksymbols.remove(symbol);
-                    parent.setSymbolHash(stocksymbols);
-                    Component[] comps;
-                    comps = currentStocksPanel.getComponents();
-                    for (Component comp : comps) 
-                    {
-                        if(comp.getName() == null ? symbol == null : comp.getName().equals(symbol))
-                        {
-                            currentStocksPanel.remove(comp);
-                            currentStocksPanel.validate();
-                            currentStocksPanel.repaint(50L);
-                        }
-                    }
+                public void actionPerformed(java.awt.event.ActionEvent evt) {
+                    deleteButtonActionPerformed(evt);
                 }
             });
             currentStocksPanel.setLayout(new FlowLayout());
@@ -479,7 +477,23 @@ public class StockManagerDialog extends javax.swing.JDialog
                 break;
         }
     }//GEN-LAST:event_buttonActionPerformed
-
+    private void deleteButtonActionPerformed(java.awt.event.ActionEvent ae)
+    {
+        String symbol = ae.getActionCommand();
+        stocksymbols.remove(symbol);
+        parent.setSymbolHash(stocksymbols);
+        Component[] comps;
+        comps = currentStocksPanel.getComponents();
+        for (Component comp : comps) 
+        {
+            if(comp.getName() == null ? symbol == null : comp.getName().equals(symbol))
+            {
+                currentStocksPanel.remove(comp);
+                currentStocksPanel.validate();
+                currentStocksPanel.repaint(50L);
+            }
+        }
+    }
     private void stockManagerTabbedPaneStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_stockManagerTabbedPaneStateChanged
         int index = stockManagerTabbedPane.getSelectedIndex();
         if(index == 1)
