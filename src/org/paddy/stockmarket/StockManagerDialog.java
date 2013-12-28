@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
@@ -268,8 +269,11 @@ public class StockManagerDialog extends javax.swing.JDialog
     private void initStockComponents()
     {
         JButton stockButton;
-        for(String stock : stocksymbols)
+        TreeSet<String> symbolsTreeSet;
+        symbolsTreeSet = new TreeSet<>(stocksymbols);
+        for (Iterator<String> it = symbolsTreeSet.iterator(); it.hasNext();) 
         {
+            String stock = it.next();
             stockButton = new JButton(stock);
             stockButton.setName(stock);
             stockButton.setPreferredSize(new java.awt.Dimension(100, 25));
