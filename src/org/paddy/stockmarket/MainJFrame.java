@@ -40,6 +40,7 @@ import org.paddy.stockmarket.util.json.Results;
 public class MainJFrame extends javax.swing.JFrame
 {
     public static final long serialVersionUID = 12345667890L;
+    private static final String stockmarkets = "Stockmarkets";
     private static StockManagerDialog stockManagerDialog;
     private static final String QUERY_YAHOOAPIS_COM = "query.yahooapis.com";
     protected HashSet<String> stocksymbols;
@@ -67,7 +68,8 @@ public class MainJFrame extends javax.swing.JFrame
      */
     public MainJFrame()
     {
-        super("Stockmarkets");
+        super(stockmarkets);
+        this.setTitle(stockmarkets);
         URL url;
         ArrayList<Image> imageList;
         url = getClass().getResource("Stockmarket.png");
