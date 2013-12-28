@@ -271,9 +271,9 @@ public class StockManagerDialog extends javax.swing.JDialog
         JButton stockButton;
         TreeSet<String> symbolsTreeSet;
         symbolsTreeSet = new TreeSet<>(stocksymbols);
-        for (Iterator<String> it = symbolsTreeSet.iterator(); it.hasNext();) 
+        for (Iterator<String> iterator = symbolsTreeSet.iterator(); iterator.hasNext();) 
         {
-            String stock = it.next();
+            String stock = iterator.next();
             stockButton = new JButton(stock);
             stockButton.setName(stock);
             stockButton.setPreferredSize(new java.awt.Dimension(100, 25));
