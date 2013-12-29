@@ -36,17 +36,4 @@ public class StockManagerDialogTest {
     @After
     public void tearDown() {
     }
-
-    /**
-     * Test of setSymbols method, of class StockManagerDialog.
-     */
-    @Test
-    public void testSetSymbols() {
-        System.out.println("setSymbols");
-        HashSet<String> stocksymbols = null;
-        StockManagerDialog instance = null;
-        instance.setSymbols(stocksymbols);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
-    }
 }

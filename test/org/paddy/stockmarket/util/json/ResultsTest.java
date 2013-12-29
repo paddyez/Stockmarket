@@ -58,8 +58,10 @@ public class ResultsTest {
     public void testGetQuote() {
         System.out.println("getQuote");
         Results instance = new Results();
-        Quote expResult = null;
-        Quote result = instance.getQuote();
+        List<Quote> expResult;
+        expResult = null;
+        List<Quote> result;
+        result = instance.getQuotes();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
@@ -84,9 +86,9 @@ public class ResultsTest {
     @Test
     public void testSetQuote() {
         System.out.println("setQuote");
-        Quote quote = null;
+        List<Quote> quote = null;
         Results instance = new Results();
-        instance.setQuote(quote);
+        instance.setQuotes(quote);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
     }

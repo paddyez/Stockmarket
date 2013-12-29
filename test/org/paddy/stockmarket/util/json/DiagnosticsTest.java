@@ -43,8 +43,8 @@ public class DiagnosticsTest {
     public void testGetJavascript() {
         System.out.println("getJavascript");
         Diagnostics instance = new Diagnostics();
-        Javascript expResult = null;
-        Javascript result = instance.getJavascript();
+        Object expResult = null;
+        Object result = instance.getJavascript();
         assertEquals(expResult, result);
         // TODO review the generated test code and remove the default call to fail.
         fail("The test case is a prototype.");
