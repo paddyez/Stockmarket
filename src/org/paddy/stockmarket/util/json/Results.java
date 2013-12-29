@@ -17,27 +17,10 @@ public class Results
             return quote;
     }
     /**
-     *
-     * @return List<Quote> quote
-     */
-    /*public Quote getQuote()
-    {
-            return quote;
-    }
-    /**
-     *
-     * @param quotes
+     * @param quote
      */
     public void setQuotes(List<Quote> quote)
     {
             this.quote = quote;
     }
-    /**
-     *
-     * @param quote
-     */
-    /*public void setQuote(Quote quote)
-    {
-            this.quote = quote;
-    }*/
 }
