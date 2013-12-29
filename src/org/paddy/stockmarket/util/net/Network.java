@@ -31,14 +31,21 @@ public class Network
             while (interfaces.hasMoreElements())
             {
                 NetworkInterface interf = interfaces.nextElement();
-                isInterfaceUp = interf.isUp();
-                if (isInterfaceUp && !interf.isLoopback())
+                if(interf.isLoopback())
                 {
-                    return isInterfaceUp;
+                    isInterfaceUp = false;
                 }
                 else
                 {
-                    //System.out.println(interf.getName() + " down.");
+                    isInterfaceUp = interf.isUp();
+                    if (isInterfaceUp)
+                    {
+                        return isInterfaceUp;
+                    }
+                    else
+                    {
+                        System.err.println(interf.getName() + " is down.");
+                    }
                 }
             }
         }
@@ -55,6 +62,13 @@ public class Network
      */
     public static boolean isReachable(String host)
     {
+        if(host.equals("") || 
+                host.equals("127.0.0.1") || 
+                host.equals("localhost"))
+        {
+            System.err.println("Host can not be an empty String, 127.0.0.1 or localhost!");
+            return false;
+        }
         boolean reachable;
         reachable = false;
         int timeout = 100;
@@ -63,11 +77,14 @@ public class Network
             InetAddress[] inetAddresses = InetAddress.getAllByName(host);
             for(InetAddress inetAddress : inetAddresses)
             {
-                reachable = inetAddress.isReachable(timeout);
-                if(reachable)
+                if(!inetAddress.getHostAddress().equals("127.0.0.1"))
                 {
-                    System.out.println("Host: " + host + " is reachable.");
-                    return reachable;
+                    reachable = inetAddress.isReachable(timeout);
+                    if(reachable)
+                    {
+                        System.out.println("Host: " + inetAddress.getHostAddress() + " is reachable.");
+                        return reachable;
+                    }
                 }
             }
             /*
@@ -78,7 +95,7 @@ public class Network
              * Otherwise, you will get "2" as a return value.
              */
             Process process = null;
-            if(OS.indexOf("mac") >= 0 ||
+            if(OS.indexOf("os x") >= 0 ||
                     OS.indexOf("nux") >= 0)
             {
                 process = java.lang.Runtime.getRuntime().exec("ping -c 1 " + host);
@@ -101,7 +118,7 @@ public class Network
                 }
                 else
                 {
-                    System.err.println(host + " Is not pingable!");
+                    System.err.println(host + " is not pingable!\nProcess exited with: " + returnVal);
                 }
             }
             catch(InterruptedException ie)
@@ -118,7 +135,7 @@ public class Network
     /**
      * Possible Values are
      * win for Windows
-     * mac for Mac
+     * os x for Mac
      * nix and nux for Unix and Linux
      * sunos for Solaris
      * @param identifier String
@@ -126,7 +143,6 @@ public class Network
      */
     public static boolean isOs(String identifier)
     {
-            String os = System.getProperty("os.name").toLowerCase();
-            return (os.indexOf(identifier) >= 0);
+            return (OS.indexOf(identifier) >= 0);
     }
 }

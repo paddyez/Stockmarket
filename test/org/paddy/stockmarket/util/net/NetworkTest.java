@@ -4,6 +4,7 @@
  */
 package org.paddy.stockmarket.util.net;
 
+import java.util.Arrays;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
@@ -42,11 +43,9 @@ public class NetworkTest {
     @Test
     public void testIsAInterfaceUp() {
         System.out.println("isAInterfaceUp");
-        boolean expResult = false;
+        boolean expResult = true;
         boolean result = Network.isAInterfaceUp();
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 
     /**
@@ -56,11 +55,14 @@ public class NetworkTest {
     public void testIsReachable() {
         System.out.println("isReachable");
         String host = "";
+        boolean result = false;
         boolean expResult = false;
-        boolean result = Network.isReachable(host);
+        result = Network.isReachable(host);
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
+        expResult = true;
+        host = "query.yahooapis.com";
+        result = Network.isReachable(host);
+        assertEquals(expResult, result);
     }
 
     /**
@@ -69,11 +71,23 @@ public class NetworkTest {
     @Test
     public void testIsOs() {
         System.out.println("isOs");
+        String[] possibleOs = {"nix","nux","os x","win"};
         String identifier = "";
-        boolean expResult = false;
-        boolean result = Network.isOs(identifier);
+        boolean result = false;
+        boolean expResult = true;
+        for (String os : possibleOs) 
+        {
+            result = Network.isOs(os);
+            if(result == true)
+            {
+                System.out.println("OS seems to be: " + os);
+                break;
+            }
+        }
+        if(result == false )
+        {
+            System.out.println("Only tested with: " + Arrays.asList(possibleOs).toString().replaceAll("^\\[|\\]$", ""));
+        }
         assertEquals(expResult, result);
-        // TODO review the generated test code and remove the default call to fail.
-        fail("The test case is a prototype.");
     }
 }
