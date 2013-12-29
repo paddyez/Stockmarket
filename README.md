@@ -1,7 +1,7 @@
 Stockmarket
 ===========
 
-YQL query from yahoo for stock prices
+YQL query from yahoo for stock prices, exchange rates and noble metal prices.
 
 LICENSE
 -------
