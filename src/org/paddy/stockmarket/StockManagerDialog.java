@@ -237,7 +237,7 @@ public class StockManagerDialog extends javax.swing.JDialog
     private void addStock()
     {
         String lookupString;
-        lookupString = addStockLookupTextField.getText();
+        lookupString = addStockLookupTextField.getText().toUpperCase();
         if(stocksymbols.contains(lookupString))
         {
             System.out.println("Already in your stocks!");
