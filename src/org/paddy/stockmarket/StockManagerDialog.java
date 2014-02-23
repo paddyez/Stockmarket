@@ -3,6 +3,7 @@ package org.paddy.stockmarket;
 import java.awt.Component;
 import java.awt.FlowLayout;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
@@ -15,6 +16,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.ToolTipManager;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.Quote;
 import org.paddy.stockmarket.util.json.Results;
@@ -59,6 +61,13 @@ public class StockManagerDialog extends javax.swing.JDialog
         else if(lookupString.equals("Enter a yahoo stock symbol".toUpperCase()) || lookupString.equals(""))
         {
             addStockLookupButton.setToolTipText("You should enter a yahoo stock symbol first");
+            ToolTipManager.sharedInstance().mouseMoved(
+                            new MouseEvent(addStockLookupButton,
+                                    -1,
+                                    System.currentTimeMillis(),
+                                    0, 0, 0, 0, 0, 0,
+                                    false,
+                                    0));
         }
         else if(parent.stocksymbols.contains(lookupString))
         {
