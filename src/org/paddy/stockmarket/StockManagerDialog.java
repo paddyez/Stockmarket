@@ -52,7 +52,7 @@ public class StockManagerDialog extends javax.swing.JDialog
     private void lookupStock()
     {
         String lookupString, searchString, ownerName, message;
-        lookupString = addStockLookupTextField.getText();
+        lookupString = addStockLookupTextField.getText().toUpperCase();
         searchString = addStockSearchTextField.getText();
         ownerName = this.getFocusOwner().getName();
         if(ownerName != null && ownerName.equals("SearchTextField") &&
@@ -64,7 +64,7 @@ public class StockManagerDialog extends javax.swing.JDialog
         {
             addStockLookupButton.setToolTipText("You should enter a yahoo stock symbol first");
         }
-        else if(parent.stocksymbols.contains(lookupString.toUpperCase()))
+        else if(parent.stocksymbols.contains(lookupString))
         {
            message = lookupString + " is already in your stocks!";
                     JOptionPane.showMessageDialog(this,
