@@ -211,7 +211,7 @@ public class MainJFrame extends javax.swing.JFrame
         Query query = null;
         Date date = new Date();
         boolean yahooFinanceQuotesBlocked = false;
-        JInternalFrame jInternalFrame=new JInternalFrame("Prices on: "+date.toString(),
+        JInternalFrame jInternalFrame=new JInternalFrame("Prices on: " + date.toString(),
                                                          true, //resizable
                                                          true, //closable
                                                          true, //maximizable
