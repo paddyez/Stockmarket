@@ -80,7 +80,7 @@
                   <Connection code="KeyEvent.VK_S" type="code"/>
                 </Property>
                 <Property name="text" type="java.lang.String" value="Stocks"/>
-                <Property name="toolTipText" type="java.lang.String" value=""/>
+                <Property name="toolTipText" type="java.lang.String" value="Add or delete stocks"/>
               </Properties>
               <Events>
                 <EventHandler event="actionPerformed" listener="java.awt.event.ActionListener" parameters="java.awt.event.ActionEvent" handler="jMenuItemEditStocksActionPerformed"/>

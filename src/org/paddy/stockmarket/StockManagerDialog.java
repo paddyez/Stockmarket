@@ -2,6 +2,8 @@ package org.paddy.stockmarket;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
+import java.awt.MouseInfo;
+import java.awt.Point;
 import java.awt.event.KeyEvent;
 import java.awt.event.MouseEvent;
 import java.io.IOException;
@@ -16,6 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
+import javax.swing.SwingUtilities;
 import javax.swing.ToolTipManager;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.Quote;
@@ -35,6 +38,8 @@ public class StockManagerDialog extends javax.swing.JDialog
     HashSet<String> stocksymbols;
     /**
      * Creates new form StockManagerDialog
+     * @param parent MainJFrame
+     * @param modal boolean
      */
     public StockManagerDialog(MainJFrame parent, boolean modal)
     {
@@ -61,13 +66,21 @@ public class StockManagerDialog extends javax.swing.JDialog
         else if(lookupString.equals("Enter a yahoo stock symbol".toUpperCase()) || lookupString.equals(""))
         {
             addStockLookupButton.setToolTipText("You should enter a yahoo stock symbol first");
-            ToolTipManager.sharedInstance().mouseMoved(
-                            new MouseEvent(addStockLookupButton,
-                                    -1,
-                                    System.currentTimeMillis(),
-                                    0, 0, 0, 0, 0, 0,
-                                    false,
-                                    0));
+            Point locationOnScreen = MouseInfo.getPointerInfo().getLocation();
+            Point locationOnComponent = new Point(locationOnScreen);
+            SwingUtilities.convertPointFromScreen(locationOnComponent, addStockLookupButton);
+            if (addStockLookupButton.contains(locationOnComponent)) {
+                ToolTipManager.sharedInstance().mouseMoved(
+                                new MouseEvent(addStockLookupButton,
+                                        -1,
+                                        System.currentTimeMillis(),
+                                        0,
+                                        locationOnComponent.x, locationOnComponent.y,
+                                        locationOnScreen.x, locationOnScreen.y,
+                                        0,
+                                        false,
+                                        MouseEvent.NOBUTTON));
+            }
         }
         else if(parent.stocksymbols.contains(lookupString))
         {
@@ -276,9 +289,7 @@ public class StockManagerDialog extends javax.swing.JDialog
         JButton stockButton;
         TreeSet<String> symbolsTreeSet;
         symbolsTreeSet = new TreeSet<>(stocksymbols);
-        for (Iterator<String> iterator = symbolsTreeSet.iterator(); iterator.hasNext();) 
-        {
-            String stock = iterator.next();
+        for (String stock : symbolsTreeSet) {
             stockButton = new JButton(stock);
             stockButton.setName(stock);
             stockButton.setPreferredSize(new java.awt.Dimension(100, 25));

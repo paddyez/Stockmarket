@@ -406,6 +406,8 @@ public class MainJFrame extends javax.swing.JFrame
     }
     /**
      * 
+     * @param width int
+     * @param height int
      */
     public void setScrollableViewportSize(int width, int height)
     {
@@ -438,6 +440,8 @@ public class MainJFrame extends javax.swing.JFrame
         jMenuItem2.setText("jMenuItem2");
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+
+        jDesktopPane1.setLayout(null);
 
         jMenuFile.setMnemonic(KeyEvent.VK_F);
         jMenuFile.setText("File");
@@ -479,7 +483,7 @@ public class MainJFrame extends javax.swing.JFrame
         jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
         jMenuItem3.setMnemonic(KeyEvent.VK_S);
         jMenuItem3.setText("Stocks");
-        jMenuItem3.setToolTipText("");
+        jMenuItem3.setToolTipText("Add or delete stocks");
         jMenuItem3.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jMenuItemEditStocksActionPerformed(evt);
