@@ -2,14 +2,11 @@ package org.paddy.stockmarket;
 
 import java.awt.Component;
 import java.awt.FlowLayout;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URISyntaxException;
 import java.net.URLEncoder;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -17,7 +14,6 @@ import java.util.TreeSet;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.Quote;
@@ -56,11 +52,11 @@ public class StockManagerDialog extends javax.swing.JDialog
         searchString = addStockSearchTextField.getText();
         ownerName = this.getFocusOwner().getName();
         if(ownerName != null && ownerName.equals("SearchTextField") &&
-                (lookupString.equals("Enter a yahoo stock symbol") || lookupString.equals("")))
+                (lookupString.equals("Enter a yahoo stock symbol".toUpperCase()) || lookupString.equals("")))
         {
             openBrowser();
         }
-        else if(lookupString.equals("Enter a yahoo stock symbol") || lookupString.equals(""))
+        else if(lookupString.equals("Enter a yahoo stock symbol".toUpperCase()) || lookupString.equals(""))
         {
             addStockLookupButton.setToolTipText("You should enter a yahoo stock symbol first");
         }
