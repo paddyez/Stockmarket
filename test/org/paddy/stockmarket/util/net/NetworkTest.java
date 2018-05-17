@@ -41,10 +41,10 @@ public class NetworkTest {
      * Test of isAInterfaceUp method, of class Network.
      */
     @Test
-    public void testIsAInterfaceUp() {
+    public void testIsInterfaceValidAndReachabl() {
         System.out.println("isAInterfaceUp");
         boolean expResult = true;
-        boolean result = Network.isAInterfaceUp();
+        boolean result = Network.isInterfaceValidAndReachable();
         assertEquals(expResult, result);
     }
 
@@ -52,16 +52,16 @@ public class NetworkTest {
      * Test of isReachable method, of class Network.
      */
     @Test
-    public void testIsReachable() {
+    public void testisRemoteReachable() {
         System.out.println("isReachable");
         String host = "";
         boolean result = false;
         boolean expResult = false;
-        result = Network.isReachable(host);
+        result = Network.isRemoteReachable(host);
         assertEquals(expResult, result);
         expResult = true;
         host = "query.yahooapis.com";
-        result = Network.isReachable(host);
+        result = Network.isRemoteReachable(host);
         assertEquals(expResult, result);
     }
 

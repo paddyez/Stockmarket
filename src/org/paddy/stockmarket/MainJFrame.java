@@ -33,6 +33,7 @@ import org.paddy.stockmarket.util.image.WindowIcons;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.Quote;
 import org.paddy.stockmarket.util.json.Results;
+import org.paddy.stockmarket.util.net.Network;
 /**
  *
  * @author paddy (Patrick-Emil Zörner)
@@ -66,22 +67,18 @@ public class MainJFrame extends javax.swing.JFrame
     /**
      * Creates new form MAinJFrame
      */
-    public MainJFrame()
-    {
+    public MainJFrame() {
         super(stockmarkets);
         this.setTitle(stockmarkets);
         URL url;
         ArrayList<Image> imageList;
         url = getClass().getResource("Stockmarket.png");
         imageList = WindowIcons.createScaledIcons(url);
-        if(!imageList.isEmpty())
-        {
-            if(imageList.size() == WindowIcons.getResolutionSize())
-            {
+        if(!imageList.isEmpty()) {
+            if(imageList.size() == WindowIcons.getResolutionSize()) {
                 this.setIconImages(imageList);
             }
-            else
-            {
+            else {
                 image = Toolkit.getDefaultToolkit().getImage(url);
                 this.setIconImage(image);
             }
@@ -94,37 +91,30 @@ public class MainJFrame extends javax.swing.JFrame
      * @return HashSet<String> of stock symbols
      */
     @SuppressWarnings("unchecked")
-    protected final HashSet<String> getSymbols()
-    {
+    protected final HashSet<String> getSymbols() {
         HashSet<String> stockSymbols = null;
         boolean exists = (new File("Symbols")).exists();
-        if (exists)
-        {
-            try
-            {
+        if (exists) {
+            try {
                 FileInputStream fis;
                 BufferedInputStream bis;
                 fis = new FileInputStream("Symbols");
                 bis = new BufferedInputStream(fis);
                 bis.mark(1);
                 int empty = bis.read();
-                if(empty == -1)
-                {
+                if(empty == -1) {
                     System.err.println("File Symbols is empty!");
                 }
-                else
-                {
+                else {
                     bis.reset();
                     ObjectInputStream ois = new ObjectInputStream(bis);
                     stockSymbols = (HashSet<String>) ois.readObject();
                 }
             }
-            catch(FileNotFoundException fnfe)
-            {
+            catch(FileNotFoundException fnfe) {
                 System.err.println(fnfe);
             }
-            catch(IOException | ClassNotFoundException e)
-            {
+            catch(IOException | ClassNotFoundException e) {
                 System.err.println(e);
             }
         }
@@ -135,48 +125,38 @@ public class MainJFrame extends javax.swing.JFrame
      * @param stockSymbols
      */
     @SuppressWarnings("unchecked")
-    public void setSymbols(HashSet<String> stockSymbols)
-    {
+    public void setSymbols(HashSet<String> stockSymbols) {
         HashSet<String> stockSymbolsFile = null;
         boolean exists = (new File("Symbols")).exists();
-        if (exists)
-        {
-            try
-            {
+        if (exists) {
+            try {
                 FileInputStream fis;
                 BufferedInputStream bis;
                 fis = new FileInputStream("Symbols");
                 bis = new BufferedInputStream(fis);
                 bis.mark(1);
                 int empty = bis.read();
-                if(empty == -1)
-                {
+                if(empty == -1) {
                     System.err.println("File Symbols is empty!");
                 }
-                else
-                {
+                else {
                     bis.reset();
                     ObjectInputStream ois = new ObjectInputStream(bis);
                     stockSymbolsFile = (HashSet<String>) ois.readObject();
                 }
             }
-            catch(FileNotFoundException fnfe)
-            {
+            catch(FileNotFoundException fnfe) {
                 System.err.println(fnfe);
             }
-            catch(IOException | ClassNotFoundException e)
-            {
+            catch(IOException | ClassNotFoundException e) {
                 System.err.println(e);
             }
         }
-        if(stockSymbolsFile != null && stockSymbols == null)
-        {
+        if(stockSymbolsFile != null && stockSymbols == null) {
             stockSymbols.addAll(stockSymbolsFile);
         }
-        if(stockSymbols.size()<100)
-        {
-            try
-            {
+        if(stockSymbols.size()<100) {
+            try {
                 FileOutputStream fos;
                 ObjectOutputStream oos;
                 fos = new FileOutputStream("Symbols");
@@ -184,30 +164,26 @@ public class MainJFrame extends javax.swing.JFrame
                 oos.writeObject(stockSymbols);
                 oos.close();
             }
-            catch(FileNotFoundException fnfe)
-            {
+            catch(FileNotFoundException fnfe) {
                 System.err.println(fnfe);
             }
-            catch(IOException ioe)
-            {
+            catch(IOException ioe) {
                 System.err.println(ioe);
             }
         }
     }
     /**
-     * 
+     *
      * @param stocksymbols
      */
-    public void setSymbolHash(HashSet<String> stocksymbols)
-    {
+    public void setSymbolHash(HashSet<String> stocksymbols) {
         this.stocksymbols = stocksymbols;
     }
     /**
      *
      * @param symbols
      */
-    private void readPrices(String symbols)
-    {
+    private void readPrices(String symbols) {
         Query query = null;
         Date date = new Date();
         boolean yahooFinanceQuotesBlocked = false;
@@ -218,25 +194,22 @@ public class MainJFrame extends javax.swing.JFrame
                                                          true);
         Object[][] rowData = new Object[stocksymbols.size()][6];
         JTable table = new JTable(rowData, COLUMN_NAMES);
-        try
-        {
+        try {
             String YQLqueryString, GETparam, request;
             YQLqueryString = URLEncoder.encode("select * " +
                                                     "from yahoo.finance.quotes " +
-                                                    "where symbol in (" + 
+                                                    "where symbol in (" +
                                                     symbols +
                                                     ") | sort(field=\"Name\", descending=\"false\")", "UTF-8");
             GETparam = YQLquery.GETparam + URLEncoder.encode("http://datatables.org/alltables.env", "UTF-8");
             request = YQLquery.requestURI + YQLqueryString + GETparam;
             query = YQLquery.yqlQueryResult(request);
         }
-        catch(UnsupportedEncodingException uee)
-        {
+        catch(UnsupportedEncodingException uee) {
                 System.err.println(uee);
         }
         Results results = query.getResults();
-        if(results == null)
-        {
+        if(results == null) {
             yahooFinanceQuotesBlocked = true;
             String diagnostics = YQLquery.getDiagnostics(query);
             JOptionPane.showMessageDialog(this,
@@ -244,21 +217,18 @@ public class MainJFrame extends javax.swing.JFrame
                 "YAHOO Errog",
                 JOptionPane.ERROR_MESSAGE);
         }
-        else
-        {
-            try
-            {
+        else {
+            try {
                 PrintWriter printWriter;
                 printWriter = new PrintWriter(new FileWriter(currentWorkingDirectory + outputFile), true);
                 printWriter.write("Symbol,Name,Price,Change from 50 day moving average,Change from 200 day moving average,Change in %\r\n");
                 List<Quote> quotes = results.getQuotes();
                 Iterator<Quote> iterator = quotes.iterator();
                 int i=0;
-                while (iterator.hasNext())
-                {
-                    String symbol, 
-                            name, 
-                            bidRealtime, 
+                while (iterator.hasNext()) {
+                    String symbol,
+                            name,
+                            bidRealtime,
                             lastTradePriceOnly,
                             bidString,
                             changeFromFiftydayMovingAverage,
@@ -280,43 +250,33 @@ public class MainJFrame extends javax.swing.JFrame
                     changeInPercent = quote.getChangeinPercent();
                     rowData[i][5] = changeInPercent;
                     float bid;
-                    if(bidRealtime != null)
-                    {
-                        try
-                        {
+                    if(bidRealtime != null) {
+                        try {
                             bid = Float.parseFloat(bidRealtime);
                         }
-                        catch(NumberFormatException nfe)
-                        {
+                        catch(NumberFormatException nfe) {
                             System.err.println(nfe);
                         }
                     }
-                    else if(lastTradePriceOnly != null)
-                    {
-                        try
-                        {
+                    else if(lastTradePriceOnly != null) {
+                        try {
                             float lastPrice = Float.parseFloat(lastTradePriceOnly);
                             rowData[i][2] = lastTradePriceOnly;
                         }
-                        catch(NumberFormatException nfe)
-                        {
+                        catch(NumberFormatException nfe) {
                             System.err.println(nfe);
                         }
                     }
-                    else if(bidString != null)
-                    {
-                        try
-                        {
+                    else if(bidString != null) {
+                        try {
                             bid = Float.parseFloat(bidString);
                             rowData[i][2] = bidString;
                         }
-                        catch(NumberFormatException nfe)
-                        {
+                        catch(NumberFormatException nfe) {
                             System.err.println(nfe);
                         }
                     }
-                    else
-                    {
+                    else {
                             System.out.println("BidRealtime is null for: " + name + " " + lastTradePriceOnly);
                     }
                     printWriter.write(rowData[i][0] + "," +
@@ -330,20 +290,17 @@ public class MainJFrame extends javax.swing.JFrame
                 printWriter.flush();
                 printWriter.close();
             }
-            catch(IOException ioe)
-            {
+            catch(IOException ioe) {
                 System.err.println(ioe);
             }
         }
-        if(yahooFinanceQuotesBlocked)
-        {
+        if(yahooFinanceQuotesBlocked) {
             jInternalFrame.dispose();
             jInternalFrame = null;
             table = null;
             rowData = null;
         }
-        else
-        {
+        else {
             TableColumn column = null;
             JScrollPane scrollPane = new JScrollPane(table);
             table.setPreferredScrollableViewportSize(preferredScrollableViewportSize);
@@ -359,25 +316,20 @@ public class MainJFrame extends javax.swing.JFrame
     /**
      * @return boolean isUpAndReachable
      */
-    protected boolean isUpAndReachable()
-    {
+    protected boolean isUpAndReachable() {
         boolean isUpAndReachable = false;
-        if(org.paddy.stockmarket.util.net.Network.isAInterfaceUp())
-        {
-            if(org.paddy.stockmarket.util.net.Network.isReachable(QUERY_YAHOOAPIS_COM))
-            {
+        if(org.paddy.stockmarket.util.net.Network.isInterfaceValidAndReachable()) {
+            if(Network.isRemoteReachable(QUERY_YAHOOAPIS_COM)) {
                 isUpAndReachable = true;
             }
-            else
-            {
+            else {
                 JOptionPane.showMessageDialog(this,
                         "Are you connected to the internet?\nMaybe your DNS-server is down?",
                         "Warning",
                         JOptionPane.WARNING_MESSAGE);
             }
         }
-        else
-        {
+        else {
             JOptionPane.showMessageDialog(this,
                 "There seems no internet interface up other than loopback.\nCheck there is a connection.",
                 "Warning",
@@ -386,31 +338,27 @@ public class MainJFrame extends javax.swing.JFrame
         return isUpAndReachable;
     }
     /**
-     * 
-     * @return symbols String 
+     *
+     * @return symbols String
      */
-    protected String getSymbolQueryString()
-    {
+    protected String getSymbolQueryString() {
         Iterator<String> iterator = stocksymbols.iterator();
         String symbols;
         symbols = "";
-        while (iterator.hasNext())
-        {
+        while (iterator.hasNext()) {
             symbols += "\"" + iterator.next() + "\"";
-            if(iterator.hasNext())
-            {
+            if(iterator.hasNext()) {
                 symbols += ",";
             }
         }
         return symbols;
     }
     /**
-     * 
+     *
      * @param width int
      * @param height int
      */
-    public void setScrollableViewportSize(int width, int height)
-    {
+    public void setScrollableViewportSize(int width, int height) {
         MainJFrame.preferredScrollableViewportSize = new Dimension(width, height);
     }
     /**
@@ -421,7 +369,6 @@ public class MainJFrame extends javax.swing.JFrame
     @SuppressWarnings("unchecked")
     // <editor-fold defaultstate="collapsed" desc="Generated Code">//GEN-BEGIN:initComponents
     private void initComponents() {
-
         jMenuItem1 = new javax.swing.JMenuItem();
         jMenuItem2 = new javax.swing.JMenuItem();
         jDesktopPane1 = new javax.swing.JDesktopPane();
@@ -434,18 +381,12 @@ public class MainJFrame extends javax.swing.JFrame
         jMenuItem3 = new javax.swing.JMenuItem();
         jMenuHelp = new javax.swing.JMenu();
         JMenuItemAbout = new javax.swing.JMenuItem();
-
         jMenuItem1.setText("jMenuItem1");
-
         jMenuItem2.setText("jMenuItem2");
-
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
-
         jDesktopPane1.setLayout(null);
-
         jMenuFile.setMnemonic(KeyEvent.VK_F);
         jMenuFile.setText("File");
-
         jMenuItemNew.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_N, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemNew.setMnemonic(KeyEvent.VK_N);
         jMenuItemNew.setText("New");
@@ -455,7 +396,6 @@ public class MainJFrame extends javax.swing.JFrame
             }
         });
         jMenuFile.add(jMenuItemNew);
-
         jMenuItemOpen.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_O, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemOpen.setMnemonic(KeyEvent.VK_O);
         jMenuItemOpen.setText("Open");
@@ -465,7 +405,6 @@ public class MainJFrame extends javax.swing.JFrame
             }
         });
         jMenuFile.add(jMenuItemOpen);
-
         jMenuItemSave.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.CTRL_MASK));
         jMenuItemSave.setText("Save");
         jMenuItemSave.addActionListener(new java.awt.event.ActionListener() {
@@ -474,12 +413,9 @@ public class MainJFrame extends javax.swing.JFrame
             }
         });
         jMenuFile.add(jMenuItemSave);
-
         jMenuBar1.add(jMenuFile);
-
         jMenuEdit.setMnemonic(KeyEvent.VK_E);
         jMenuEdit.setText("Edit");
-
         jMenuItem3.setAccelerator(javax.swing.KeyStroke.getKeyStroke(java.awt.event.KeyEvent.VK_S, java.awt.event.InputEvent.ALT_MASK));
         jMenuItem3.setMnemonic(KeyEvent.VK_S);
         jMenuItem3.setText("Stocks");
@@ -490,20 +426,14 @@ public class MainJFrame extends javax.swing.JFrame
             }
         });
         jMenuEdit.add(jMenuItem3);
-
         jMenuBar1.add(jMenuEdit);
-
         jMenuHelp.setMnemonic(KeyEvent.VK_H);
         jMenuHelp.setText("Help");
-
         JMenuItemAbout.setMnemonic(KeyEvent.VK_A);
         JMenuItemAbout.setText("About");
         jMenuHelp.add(JMenuItemAbout);
-
         jMenuBar1.add(jMenuHelp);
-
         setJMenuBar(jMenuBar1);
-
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -514,21 +444,17 @@ public class MainJFrame extends javax.swing.JFrame
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jDesktopPane1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, 350, Short.MAX_VALUE)
         );
-
         pack();
     }// </editor-fold>//GEN-END:initComponents
     private void jMenuItemNewActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemNewActionPerformed
-        if(stocksymbols != null)
-        {
-            if(isUpAndReachable())
-            {
+        if(stocksymbols != null) {
+            if(isUpAndReachable()) {
                 String symbols;
                 symbols = getSymbolQueryString();
                 readPrices(symbols);
             }
         }
-        else
-        {
+        else {
             System.err.println("No stock symbols loaded.");
             JOptionPane.showMessageDialog(this,
                 "No stock symbols loaded.\nTry saving at least on symbol.",
@@ -540,19 +466,16 @@ public class MainJFrame extends javax.swing.JFrame
         // TODO add your handling code here:
     }//GEN-LAST:event_jMenuItemOpenActionPerformed
     private void jMenuItemSaveActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemSaveActionPerformed
-        if(stocksymbols == null || stocksymbols.isEmpty())
-        {
+        if(stocksymbols == null || stocksymbols.isEmpty()) {
             String[] symbolsArray = {"DTE.DE","SAP.DE","CGE.F","ELE.MC","FTE.PA","MSFT","TNE5.DE","DKEX.SG","EURUSD=X","EURGBP=X","NESM.F","RWE.DE","SDF.DE","ALV.F","EOAN.F","ENA.F","ENL.F","BPE5.DE","CBK.F"};
             stocksymbols = new HashSet<>(Arrays.asList(symbolsArray));
         }
         setSymbols(stocksymbols);
     }//GEN-LAST:event_jMenuItemSaveActionPerformed
-
     private void jMenuItemEditStocksActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jMenuItemEditStocksActionPerformed
         int lx, ly, width, height, shrink;
         shrink = 50;
-        if(stockManagerDialog == null)
-        {
+        if(stockManagerDialog == null) {
             stockManagerDialog = new StockManagerDialog(this, true);
         }
         /* Calculate location and dimansion of the frame */
@@ -568,7 +491,6 @@ public class MainJFrame extends javax.swing.JFrame
         stockManagerDialog.setIconImage(image);
         stockManagerDialog.setVisible(true);
     }//GEN-LAST:event_jMenuItemEditStocksActionPerformed
-
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem JMenuItemAbout;
     private javax.swing.JDesktopPane jDesktopPane1;
