@@ -11,31 +11,26 @@ import org.paddy.stockmarket.util.json.Diagnostics;
 import org.paddy.stockmarket.util.json.Javascript;
 import org.paddy.stockmarket.util.json.Query;
 import org.paddy.stockmarket.util.json.QueryContainer;
-
 /**
  *
  * @author paddy
  */
-public class YQLquery 
-{
+public class YQLquery {
     protected final static String requestURI = "http://query.yahooapis.com/v1/public/yql?q=";
     protected final static String GETparam = "&format=json" +
                                 "&diagnostics=true" +
                                 "&env=";
     /**
-     * 
+     *
      * @param request String
      * @return Query
      */
-    protected static Query yqlQueryResult(String request)
-    {
+    protected static Query yqlQueryResult(String request) {
         Query query = null;
-        try
-        {
+        try {
             System.out.println(request);
             URL url = new URL(request);
-            try
-            {
+            try {
                 InputStreamReader isr;
                 BufferedReader br;
                 isr = new InputStreamReader(url.openStream());
@@ -43,8 +38,7 @@ public class YQLquery
                 String inputLine;
                 String returnString;
                 returnString = "";
-                while ((inputLine = br.readLine()) != null)
-                {
+                while ((inputLine = br.readLine()) != null) {
                         returnString += inputLine;
                 }
                 br.close();
@@ -57,28 +51,24 @@ public class YQLquery
                 */
                 QueryContainer queryContainer;
                 queryContainer = gson.fromJson(jsonElement, QueryContainer.class);
-                
                 query = queryContainer.getQuery();
                 //System.out.println(query.getCount());
             }
-            catch(IOException ioe)
-            {
+            catch(IOException ioe) {
                     System.err.println(ioe);
             }
         }
-        catch(MalformedURLException mue)
-        {
+        catch(MalformedURLException mue) {
                 System.err.println(mue);
         }
         return query;
     }
     /**
-     * 
+     *
      * @param query Query
      * @return String
      */
-    protected static String getDiagnostics(Query query)
-    {
+    protected static String getDiagnostics(Query query) {
         Diagnostics diagnostics = query.getDiagnostics();
         String content = diagnostics.getJavascript().toString();
         System.err.println(content);

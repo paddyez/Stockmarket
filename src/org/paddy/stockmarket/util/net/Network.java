@@ -68,58 +68,56 @@ public class Network {
             System.err.println("Host can not be an empty String, 127.0.0.1 or localhost!");
             return reachable;
         }
-        int timeout = 1000;
+        List<InetAddress> inetAddresses = null;
         try {
-            InetAddress[] inetAddresses = InetAddress.getAllByName(host);
-            for(InetAddress inetAddress : inetAddresses) {
-                System.out.println("Host: " + inetAddress.getHostAddress());
-                if(inetAddress instanceof Inet4Address) {
-                    reachable = inetAddress.isReachable(timeout);
-                    if (reachable) {
-                        System.out.println(" is reachable.");
-                        return reachable;
-                    } else {
-                        System.out.println(" is not reachable.");
-                    }
-                }
-            }
-            /*
-             * A Hackish Workaround
-             * java InetAddress.isReachable only permits port 7
-             * which in most cases is closed by firewall
-             * This will return 0 if the host is reachable.
-             * Otherwise, you will get "2" as a return value.
-             */
-            Process process = null;
-            if(OS.indexOf("os x") >= 0 ||
-                    OS.indexOf("mac os x") >= 0 ||
-                    OS.indexOf("nux") >= 0) {
-                process = java.lang.Runtime.getRuntime().exec("ping -c 1 " + host);
-            }
-            else if(OS.indexOf("win") >= 0) {
-                process = java.lang.Runtime.getRuntime().exec("ping -n 1 " + host);
-            }
-            else {
-                System.err.println("Unknown system or not yet supported.");
-            }
-            try {
-                int returnVal = process.waitFor();
-                if(returnVal == 0) {
-                    reachable = true;
-                    return reachable;
-                }
-                else {
-                    System.err.println(host + " is not pingable!\nProcess exited with: " + returnVal);
-                }
-            }
-            catch(InterruptedException ie) {
-                System.err.println(ie);
-            }
+            inetAddresses = Arrays.asList(InetAddress.getAllByName(host));
         }
-        catch(IOException ioe) {
-            System.err.println("IOException: " + ioe);
+        catch (UnknownHostException e) {
+            e.printStackTrace();
+        }
+        reachable = inetAddresses.stream()
+                .filter(Network::ipv4)
+                .anyMatch(Network::reachable);
+        if(reachable == false) {
+            System.out.println("Pinging host.");
+            reachable = pingHost(host);
         }
         return reachable;
+    }
+    /*
+     * A Hackish Workaround
+     * java InetAddress.isReachable only permits port 7
+     * which in most cases is closed by firewall
+     * This will return 0 if the host is reachable.
+     * Otherwise, you will get "2" as a return value.
+     */
+    private static boolean pingHost(String host) {
+        boolean pingable = false;
+        Process process = null;
+        try {
+            if (OS.indexOf("os x") >= 0 ||
+                    OS.indexOf("mac os x") >= 0 ||
+                    OS.indexOf("nux") >= 0) {
+                process = Runtime.getRuntime().exec("ping -c 1 " + host);
+            } else if (OS.indexOf("win") >= 0) {
+                process = java.lang.Runtime.getRuntime().exec("ping -n 1 " + host);
+            } else {
+                System.err.println("Unknown system or not yet supported.");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        try {
+            int returnVal = process.waitFor();
+            if (returnVal == 0) {
+                pingable = true;
+            } else {
+                System.err.println(host + " is not pingable!\nProcess exited with: " + returnVal);
+            }
+        } catch (InterruptedException ie) {
+            System.err.println(ie);
+        }
+        return pingable;
     }
     /**
      * Possible Values are
@@ -156,5 +154,18 @@ public class Network {
             System.err.println("validInterface: " + se);
         }
         return pass;
+    }
+    private static boolean ipv4(InetAddress ia) {
+        return ia instanceof Inet4Address;
+    }
+    private static boolean reachable(InetAddress ia) {
+        boolean reachable = false;
+        int timeout = 1000;
+        try {
+            reachable = !ia.isReachable(timeout);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return reachable;
     }
 }

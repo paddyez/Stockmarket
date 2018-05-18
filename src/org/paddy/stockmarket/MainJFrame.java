@@ -38,8 +38,7 @@ import org.paddy.stockmarket.util.net.Network;
  *
  * @author paddy (Patrick-Emil Zörner)
  */
-public class MainJFrame extends javax.swing.JFrame
-{
+public class MainJFrame extends javax.swing.JFrame {
     public static final long serialVersionUID = 12345667890L;
     private static final String stockmarkets = "Stockmarkets";
     private static StockManagerDialog stockManagerDialog;
@@ -187,7 +186,7 @@ public class MainJFrame extends javax.swing.JFrame
         Query query = null;
         Date date = new Date();
         boolean yahooFinanceQuotesBlocked = false;
-        JInternalFrame jInternalFrame=new JInternalFrame("Prices on: " + date.toString(),
+        JInternalFrame jInternalFrame = new JInternalFrame("Prices on: " + date.toString(),
                                                          true, //resizable
                                                          true, //closable
                                                          true, //maximizable
